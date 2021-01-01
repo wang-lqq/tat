@@ -56,12 +56,13 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
         </dependency>
         <!-- mybatis-plus end -->
-
-        <!-- MySQL -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+             
+        <!-- SQLServer2008 -->
+		<dependency>
+		    <groupId>com.microsoft.sqlserver</groupId>
+		    <artifactId>mssql-jdbc</artifactId>
+		    <version>6.4.0.jre8</version>
+		</dependency>
 
         <!-- swagger start -->
         <dependency>

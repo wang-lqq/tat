@@ -9,9 +9,9 @@ spring-boot-plus:
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/spring_boot_plus?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: root
+    url: jdbc:sqlserver://127.0.0.1:1433;database=sa
+    username: sa
+    password: qQ564128566
 
   # Redis配置
   redis:

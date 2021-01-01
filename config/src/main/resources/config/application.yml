@@ -119,13 +119,13 @@ spring-boot-plus:
     # 操作日志配置
     operation-log:
       # 是否启用
-      enable: true
+      enable: false
       # 排除的路径
       exclude-paths:
     # 登录日志配置
     login-log:
       # 是否启用
-      enable: true
+      enable: false
       # 登录地址
       login-path: /login
       # 登出地址
@@ -179,7 +179,7 @@ spring-boot-plus:
   ######################## Spring Shiro start ########################
   shiro:
     # 是否启用
-    enable: true
+    enable: false
     # 权限配置
     anon:
       # 排除登录登出
@@ -258,7 +258,7 @@ mybatis-plus:
 ---
 spring:
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     type: com.zaxxer.hikari.HikariDataSource
     cachePrepStmts: true
     prepStmtCacheSize: 300

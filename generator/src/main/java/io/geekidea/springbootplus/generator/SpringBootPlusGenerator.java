@@ -45,24 +45,24 @@ public class SpringBootPlusGenerator {
 
         // 设置基本信息
         generatorProperties
-                .setMavenModuleName("example")
+                .setMavenModuleName("ssx")
                 .setParentPackage("com.example")
-                .setModuleName("foobar")
-                .setAuthor("geekidea")
+                .setModuleName("document")
+                .setAuthor("wanglonglong")
                 .setFileOverride(true);
 
         // 设置表信息
-        generatorProperties.addTable("foo_bar","id");
+        generatorProperties.addTable("document","id");
         // 设置表前缀
         // generatorProperties.setTablePrefix(Arrays.asList("tb_"));
 
         // 数据源配置
         generatorProperties.getDataSourceConfig()
-                .setDbType(DbType.MYSQL)
-                .setUsername("root")
-                .setPassword("root")
-                .setDriverName("com.mysql.jdbc.Driver")
-                .setUrl("jdbc:mysql://localhost:3306/spring_boot_plus?useUnicode=true&characterEncoding=UTF-8&useSSL=false");
+                .setDbType(DbType.SQL_SERVER)
+                .setUsername("sa")
+                .setPassword("qQ564128566")
+                .setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
+                .setUrl("jdbc:sqlserver://localhost:1433;database=sa");
 
         // 生成配置
         generatorProperties.getGeneratorConfig()
