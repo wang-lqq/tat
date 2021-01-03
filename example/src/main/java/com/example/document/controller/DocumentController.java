@@ -58,7 +58,12 @@ public class DocumentController extends BaseController {
     	Category category = categoryService.getById(document.getCategoryId());
     	document.setCategoryName(category.getName());
     	document.setUpdateTime(new Date());
-    	boolean flag = documentService.saveDocument(document);
+    	boolean flag = false;
+    	if(document.getId() != null && document.getId() != 0){
+    		flag = documentService.updateDocument(document);
+    	}else {
+    		flag = documentService.saveDocument(document);
+    	}
         return ApiResult.result(flag);
     }
 
