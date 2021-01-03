@@ -38,6 +38,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 上传控制器
@@ -65,10 +67,10 @@ public class UploadController {
     @ApiOperation(value = "上传单个文件", response = ApiResult.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "file", value = "文件", required = true,dataType = "__file"),
-            @ApiImplicitParam(name = "type", value = "类型 head:头像",required = true)
+            @ApiImplicitParam(name = "type", value = "类型 head:头像",required = false)
     })
-    public ApiResult<String> upload(@RequestParam("file") MultipartFile multipartFile,
-                                    @RequestParam("type") String type) throws Exception {
+    public Map<String, Object> upload(@RequestParam("file") MultipartFile multipartFile,
+                                    @RequestParam(value = "type", required = false) String type) throws Exception {
         log.info("multipartFile = " + multipartFile);
         log.info("ContentType = " + multipartFile.getContentType());
         log.info("OriginalFilename = " + multipartFile.getOriginalFilename());
@@ -90,8 +92,13 @@ public class UploadController {
 
         String fileAccessPath = springBootPlusProperties.getResourceAccessUrl() + saveFileName;
         log.info("fileAccessPath:{}", fileAccessPath);
-
-        return ApiResult.ok(fileAccessPath);
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> data = new HashMap<>();
+        map.put("code", 0);
+        map.put("msg", "");
+        data.put("src", fileAccessPath);
+        map.put("data", data);
+        return map;
     }
 
 }

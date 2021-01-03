@@ -18,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -91,9 +92,19 @@ public class CategoryController extends BaseController {
     @OperationLog(name = "类别分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "类别分页列表", response = Category.class)
     public ApiResult<Paging<Category>> getCategoryPageList(@Validated @RequestBody CategoryPageParam categoryPageParam) throws Exception {
-        Paging<Category> paging = categoryService.getCategoryPageList(categoryPageParam);
+    	Paging<Category> paging = categoryService.getCategoryPageList(categoryPageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 查询所有
+     */
+    @PostMapping("/getAll")
+    @OperationLog(name = "类别列表", type = OperationLogType.LIST)
+    @ApiOperation(value = "类别列表", response = Category.class)
+    public ApiResult<List<Category>> getAll() throws Exception {
+    	List<Category> categories = categoryService.list();
+        return ApiResult.ok(categories);
+    }
 }
 
