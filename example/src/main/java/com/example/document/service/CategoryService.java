@@ -1,7 +1,11 @@
 package com.example.document.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.document.entity.Category;
+import com.example.document.entity.Document;
 import com.example.document.param.CategoryPageParam;
+import com.example.document.param.DocumentPageParam;
+
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 
@@ -49,5 +53,6 @@ public interface CategoryService extends BaseService<Category> {
      * @throws Exception
      */
     Paging<Category> getCategoryPageList(CategoryPageParam categoryPageParam) throws Exception;
-
+    
+    Paging<Category> getCategoryPageList(CategoryPageParam categoryPageParam, LambdaQueryWrapper<Category> wrapper) throws Exception;
 }

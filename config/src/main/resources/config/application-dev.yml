@@ -10,8 +10,8 @@ spring-boot-plus:
 spring:
   datasource:
     url: jdbc:sqlserver://127.0.0.1:1433;database=sa
-    username: sa
-    password: qQ564128566
+    username: root
+    password: qq564128566
 
   # Redis配置
   redis:

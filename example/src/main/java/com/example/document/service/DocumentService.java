@@ -1,5 +1,6 @@
 package com.example.document.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.document.entity.Document;
 import com.example.document.param.DocumentPageParam;
 import io.geekidea.springbootplus.framework.common.service.BaseService;
@@ -49,5 +50,7 @@ public interface DocumentService extends BaseService<Document> {
      * @throws Exception
      */
     Paging<Document> getDocumentPageList(DocumentPageParam documentPageParam) throws Exception;
-
+    
+    
+    Paging<Document> getDocumentPageList(DocumentPageParam documentPageParam, LambdaQueryWrapper<Document> wrapper) throws Exception;
 }

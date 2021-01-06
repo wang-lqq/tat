@@ -1,20 +1,28 @@
 package com.example.document.service.impl;
 
-import com.example.document.entity.Category;
-import com.example.document.mapper.CategoryMapper;
-import com.example.document.service.CategoryService;
-import com.example.document.param.CategoryPageParam;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
-import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.document.entity.Category;
+import com.example.document.entity.Document;
+import com.example.document.mapper.CategoryMapper;
+import com.example.document.mapper.DocumentMapper;
+import com.example.document.param.CategoryPageParam;
+import com.example.document.service.CategoryService;
+
+import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
+import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
+import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 类别 服务实现类
@@ -28,6 +36,9 @@ public class CategoryServiceImpl extends BaseServiceImpl<CategoryMapper, Categor
 
     @Autowired
     private CategoryMapper categoryMapper;
+    
+    @Autowired
+    private DocumentMapper documentMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -38,7 +49,17 @@ public class CategoryServiceImpl extends BaseServiceImpl<CategoryMapper, Categor
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateCategory(Category category) throws Exception {
-        return super.updateById(category);
+    	boolean b = super.updateById(category);
+    	if(b) {
+    		Map<String, Object> columnMap = new HashMap<>();
+        	columnMap.put("category_id", category.getId());
+        	List<Document> list = documentMapper.selectByMap(columnMap);
+        	for (Document document : list) {
+        		document.setCategoryName(category.getName());
+        		documentMapper.updateById(document);
+    		}
+    	}
+    	return b;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -54,5 +75,13 @@ public class CategoryServiceImpl extends BaseServiceImpl<CategoryMapper, Categor
         IPage<Category> iPage = categoryMapper.selectPage(page, wrapper);
         return new Paging<Category>(iPage);
     }
+
+	@Override
+	public Paging<Category> getCategoryPageList(CategoryPageParam categoryPageParam,
+			LambdaQueryWrapper<Category> wrapper) throws Exception {
+		Page<Category> page = new PageInfo<>(categoryPageParam, OrderItem.desc(getLambdaColumn(Category::getCreateTime)));
+        IPage<Category> iPage = categoryMapper.selectPage(page, wrapper);
+        return new Paging<Category>(iPage);
+	}
 
 }

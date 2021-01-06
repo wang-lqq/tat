@@ -97,7 +97,7 @@ public class UploadController {
         map.put("code", 0);
         map.put("msg", "");
         data.put("src", fileAccessPath);
-        map.put("data", data);
+        map.put("data", fileAccessPath);
         return map;
     }
 

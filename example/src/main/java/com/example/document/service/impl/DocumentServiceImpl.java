@@ -1,20 +1,22 @@
 package com.example.document.service.impl;
 
-import com.example.document.entity.Document;
-import com.example.document.mapper.DocumentMapper;
-import com.example.document.service.DocumentService;
-import com.example.document.param.DocumentPageParam;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
-import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.document.entity.Document;
+import com.example.document.mapper.DocumentMapper;
+import com.example.document.param.DocumentPageParam;
+import com.example.document.service.DocumentService;
+
+import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
+import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
+import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 文档 服务实现类
@@ -55,4 +57,11 @@ public class DocumentServiceImpl extends BaseServiceImpl<DocumentMapper, Documen
         return new Paging<Document>(iPage);
     }
 
+	@Override
+	public Paging<Document> getDocumentPageList(DocumentPageParam documentPageParam,
+			LambdaQueryWrapper<Document> wrapper) throws Exception {
+		Page<Document> page = new PageInfo<>(documentPageParam, OrderItem.desc(getLambdaColumn(Document::getCreateTime)));
+        IPage<Document> iPage = documentMapper.selectPage(page, wrapper);
+        return new Paging<Document>(iPage);
+	}
 }

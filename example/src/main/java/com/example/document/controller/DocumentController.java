@@ -2,7 +2,9 @@ package com.example.document.controller;
 
 import java.util.Date;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.document.entity.Category;
 import com.example.document.entity.Document;
 import com.example.document.param.DocumentPageParam;
@@ -55,7 +59,9 @@ public class DocumentController extends BaseController {
     @OperationLog(name = "添加文档", type = OperationLogType.ADD)
     @ApiOperation(value = "添加文档", response = ApiResult.class)
     public ApiResult<Boolean> addDocument(@Validated(Add.class) @RequestBody Document document) throws Exception {
+    	String htmlStr =StringEscapeUtils.unescapeHtml4(document.getContent());
     	Category category = categoryService.getById(document.getCategoryId());
+    	document.setContent(htmlStr);
     	document.setCategoryName(category.getName());
     	document.setUpdateTime(new Date());
     	boolean flag = false;
@@ -111,8 +117,23 @@ public class DocumentController extends BaseController {
     @PostMapping("/getPageList")
     @OperationLog(name = "文档分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "文档分页列表", response = Document.class)
-    public ApiResult<Paging<Document>> getDocumentPageList(@Validated @RequestBody DocumentPageParam documentPageParam) throws Exception {
-        Paging<Document> paging = documentService.getDocumentPageList(documentPageParam);
+    public ApiResult<Paging<Document>> getDocumentPageList(@Validated @RequestBody DocumentPageParam documentPageParam
+    		) throws Exception {
+    	LambdaQueryWrapper<Document> wrapper = new LambdaQueryWrapper<>();
+    	String keyword = documentPageParam.getKeyword();
+    	if(!StringUtils.isEmpty(keyword)) {
+    		keyword = StringEscapeUtils.unescapeHtml4(keyword);
+    		JSONObject obj = JSONObject.parseObject(keyword);
+    		Document document = new Document();
+    		if(!StringUtils.isEmpty(obj.getString("CategoryId"))) {
+    			document.setCategoryId(Integer.parseInt(obj.getString("CategoryId")));
+    		}
+    		if(!StringUtils.isEmpty(obj.getString("title"))) {
+    			wrapper.like(Document::getTitle, obj.getString("title")).or().like(Document::getContent, obj.getString("title"));
+    		}
+    		wrapper.setEntity(document);
+    	}
+    	Paging<Document> paging = documentService.getDocumentPageList(documentPageParam, wrapper);
         return ApiResult.ok(paging);
     }
 
