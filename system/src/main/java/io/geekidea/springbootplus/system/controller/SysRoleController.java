@@ -16,6 +16,19 @@
 
 package io.geekidea.springbootplus.system.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import io.geekidea.springbootplus.framework.common.api.ApiCode;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -31,12 +44,6 @@ import io.geekidea.springbootplus.system.service.SysRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <pre>
@@ -59,13 +66,13 @@ public class SysRoleController extends BaseController {
     /**
      * 添加系统角色
      */
-    @PostMapping("/add")
+    @PostMapping("/insert")
     @RequiresPermissions("sys:role:add")
     @OperationLog(name = "添加系统角色", type = OperationLogType.ADD)
     @ApiOperation(value = "添加系统角色", response = ApiResult.class)
-    public ApiResult<Boolean> addSysRole(@Validated(Add.class) @RequestBody SysRole sysRole) throws Exception {
-        boolean flag = sysRoleService.saveSysRole(sysRole);
-        return ApiResult.result(flag);
+    public ApiResult<Long> addSysRole(@Validated(Add.class) @RequestBody SysRole sysRole) throws Exception {
+        sysRoleService.saveSysRole(sysRole);
+        return ApiResult.result(ApiCode.SUCCESS, sysRole.getId());
     }
 
     /**
@@ -140,6 +147,5 @@ public class SysRoleController extends BaseController {
         boolean flag = sysRoleService.updateSysRolePermission(param);
         return ApiResult.result(flag);
     }
-
 }
 

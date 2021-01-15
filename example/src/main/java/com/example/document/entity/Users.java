@@ -15,16 +15,16 @@ import javax.validation.constraints.NotNull;
 import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 
 /**
- * 文档
+ * 
  *
  * @author wanglonglong
- * @since 2021-01-01
+ * @since 2021-01-07
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "Document对象")
-public class Document extends BaseEntity {
+@ApiModel(value = "Users对象")
+public class Users extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
@@ -37,16 +37,10 @@ public class Document extends BaseEntity {
     @ApiModelProperty("修改时间")
     private Date updateTime;
 
-    @ApiModelProperty("类别id")
-    private Integer categoryId;
+    @ApiModelProperty("用户名")
+    private String username;
 
-    @ApiModelProperty("类别名称")
-    private String categoryName;
-
-    @ApiModelProperty("标题")
-    private String title;
-
-    @ApiModelProperty("内容")
-    private String content;
+    @ApiModelProperty("密码")
+    private String password;
 
 }

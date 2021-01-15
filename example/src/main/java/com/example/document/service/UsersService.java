@@ -1,35 +1,35 @@
 package com.example.document.service;
 
-import com.example.document.entity.Category;
-import com.example.document.param.CategoryPageParam;
+import com.example.document.entity.Users;
+import com.example.document.param.UsersPageParam;
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 
 /**
- * 类别 服务类
+ *  服务类
  *
  * @author wanglonglong
- * @since 2021-01-01
+ * @since 2021-01-07
  */
-public interface CategoryService extends BaseService<Category> {
+public interface UsersService extends BaseService<Users> {
 
     /**
      * 保存
      *
-     * @param category
+     * @param users
      * @return
      * @throws Exception
      */
-    boolean saveCategory(Category category) throws Exception;
+    boolean saveUsers(Users users) throws Exception;
 
     /**
      * 修改
      *
-     * @param category
+     * @param users
      * @return
      * @throws Exception
      */
-    boolean updateCategory(Category category) throws Exception;
+    boolean updateUsers(Users users) throws Exception;
 
     /**
      * 删除
@@ -38,16 +38,18 @@ public interface CategoryService extends BaseService<Category> {
      * @return
      * @throws Exception
      */
-    boolean deleteCategory(Long id) throws Exception;
+    boolean deleteUsers(Long id) throws Exception;
 
 
     /**
      * 获取分页对象
      *
-     * @param categoryQueryParam
+     * @param usersQueryParam
      * @return
      * @throws Exception
      */
-    Paging<Category> getCategoryPageList(CategoryPageParam categoryPageParam) throws Exception;
+    Paging<Users> getUsersPageList(UsersPageParam usersPageParam) throws Exception;
+
+	Users login(Users user);
 
 }

@@ -16,14 +16,14 @@
 
 package io.geekidea.springbootplus.system.vo;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 系统权限树形列表VO
@@ -78,6 +78,21 @@ public class SysPermissionTreeVo implements Serializable {
 
     @ApiModelProperty("修改时间")
     private Date updateTime;
+    
+    @ApiModelProperty("节点标题")
+	private String title;
+	
+    @ApiModelProperty("节点是否初始为选中状态（如果开启复选框的话），默认 false")
+	private boolean checked;
+    
+    @ApiModelProperty("节点是否初始展开，默认 false")
+    private boolean spread = true;
+	
+    @ApiModelProperty("节点字段名")
+	private String field;
+    
+    @ApiModelProperty("节点是否为禁用状态。默认 false")
+    private boolean disabled;
 
     @ApiModelProperty("子节点集合")
     private List<SysPermissionTreeVo> children;

@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -67,6 +68,7 @@ public class SysDepartmentServiceImpl extends BaseServiceImpl<SysDepartmentMappe
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateSysDepartment(SysDepartment sysDepartment) throws Exception {
+    	sysDepartment.setUpdateTime(new Date());
         return super.updateById(sysDepartment);
     }
 
@@ -113,6 +115,7 @@ public class SysDepartmentServiceImpl extends BaseServiceImpl<SysDepartmentMappe
         List<SysDepartmentTreeVo> list = SysDepartmentConvert.INSTANCE.listToTreeVoList(sysDepartmentList);
         List<SysDepartmentTreeVo> treeVos = new ArrayList<>();
         for (SysDepartmentTreeVo treeVo : list) {
+        	treeVo.setTitle(treeVo.getName());
             if (treeVo.getParentId() == null) {
                 treeVos.add(findChildren(treeVo, list));
             }

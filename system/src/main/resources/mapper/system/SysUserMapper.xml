@@ -59,16 +59,17 @@
         </if>
         <if test="param.keyword != null and param.keyword != ''">
             and (
-            u.username like concat('%', #{param.keyword} ,'%') or
-            u.nickname like concat('%', #{param.keyword} ,'%')
+            u.username like '%'+#{param.keyword}+'%' or
+            u.nickname like '%'+#{param.keyword}+'%'
             )
         </if>
         <if test="param.username != null and param.username != ''">
-            and u.username like concat('%', #{param.username} ,'%')
+            and u.username like '%'+#{param.username}+'%'
         </if>
         <if test="param.nickname != null and param.nickname != ''">
-            and u.nickname like concat('%', #{param.nickname} ,'%')
+            and u.nickname like '%'+#{param.nickname}+'%'
         </if>
+        
     </select>
 
 </mapper>

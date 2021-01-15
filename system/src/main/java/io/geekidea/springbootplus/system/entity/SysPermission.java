@@ -16,20 +16,22 @@
 
 package io.geekidea.springbootplus.system.entity;
 
+import java.util.Date;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.Version;
+
 import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import java.util.Date;
 
 /**
  * <pre>
@@ -53,7 +55,7 @@ public class SysPermission extends BaseEntity {
 
     @ApiModelProperty("权限名称")
     private String name;
-
+    
     @ApiModelProperty("父id")
     private Long parentId;
 
@@ -72,7 +74,6 @@ public class SysPermission extends BaseEntity {
     private Integer type;
 
     @ApiModelProperty("层级，1：第一级，2：第二级，N：第N级")
-    @NotNull(message = "层级，1：第一级，2：第二级，N：第N级不能为空")
     private Integer level;
 
     @ApiModelProperty("状态，0：禁用，1：启用")

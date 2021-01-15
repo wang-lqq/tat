@@ -16,15 +16,15 @@
 
 package io.geekidea.springbootplus.system.service;
 
+import java.io.Serializable;
+import java.util.List;
+
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import io.geekidea.springbootplus.system.entity.SysPermission;
 import io.geekidea.springbootplus.system.param.SysPermissionPageParam;
 import io.geekidea.springbootplus.system.vo.SysPermissionQueryVo;
 import io.geekidea.springbootplus.system.vo.SysPermissionTreeVo;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * <pre>
@@ -100,12 +100,13 @@ public interface SysPermissionService extends BaseService<SysPermission> {
 
     /**
      * 转换权限列表为树形菜单
+     * @param <T>
      *
      * @param sysPermissions
      * @return
      * @throws Exception
      */
-    List<SysPermissionTreeVo> convertSysPermissionTreeVoList(List<SysPermission> sysPermissions) throws Exception;
+    List<SysPermissionTreeVo> convertSysPermissionTreeVoList(List<SysPermission> sysPermissions, boolean isThreeLevel) throws Exception;
 
     /**
      * 获取获取菜单树形列表
@@ -159,4 +160,14 @@ public interface SysPermissionService extends BaseService<SysPermission> {
      * @throws Exception
      */
     List<SysPermissionTreeVo> getNavMenuTree() throws Exception;
+    
+    /**
+     * 根据角色id获取权限树形列表
+     * @param roleId
+     * @return
+     * @throws Exception
+     */
+    List<SysPermissionTreeVo> getPermissionByRoleId(Long roleId) throws Exception;
+
+	List<SysPermission> OneLevel();
 }

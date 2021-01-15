@@ -1,7 +1,9 @@
 package com.example.document.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import com.example.document.entity.Category;
 import com.example.document.param.CategoryPageParam;
 import com.example.document.service.CategoryService;
 
+import cn.hutool.core.collection.CollectionUtil;
+import io.geekidea.springbootplus.framework.common.api.ApiCode;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -55,6 +59,15 @@ public class CategoryController extends BaseController {
     @OperationLog(name = "添加类别", type = OperationLogType.ADD)
     @ApiOperation(value = "添加类别", response = ApiResult.class)
     public ApiResult<Boolean> addCategory(@Validated(Add.class) @RequestBody Category category) throws Exception {
+    	if(StringUtils.isEmpty(category.getName())) {
+    		return ApiResult.result(ApiCode.FAIL, null);
+    	}
+    	Map<String, Object> columnMap = new HashMap<>();
+    	columnMap.put("name", category.getName());
+    	List<Category> list = categoryService.listByMap(columnMap);
+    	if(CollectionUtil.isNotEmpty(list)) {
+    		 return ApiResult.result(ApiCode.FAIL, null);
+    	}
     	category.setUpdateTime(new Date());
     	boolean flag = categoryService.saveCategory(category);
         return ApiResult.result(flag);
@@ -67,6 +80,15 @@ public class CategoryController extends BaseController {
     @OperationLog(name = "修改类别", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改类别", response = ApiResult.class)
     public ApiResult<Boolean> updateCategory(@Validated(Update.class) @RequestBody Category category) throws Exception {
+    	if(StringUtils.isEmpty(category.getName())) {
+    		return ApiResult.result(ApiCode.FAIL, null);
+    	}
+    	Map<String, Object> columnMap = new HashMap<>();
+    	columnMap.put("name", category.getName());
+    	List<Category> list = categoryService.listByMap(columnMap);
+    	if(CollectionUtil.isNotEmpty(list)) {
+    		 return ApiResult.result(ApiCode.FAIL, null);
+    	}
     	category.setUpdateTime(new Date());
     	boolean flag = categoryService.updateCategory(category);
         return ApiResult.result(flag);

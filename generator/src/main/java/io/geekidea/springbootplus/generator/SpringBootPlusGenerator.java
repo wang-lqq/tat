@@ -52,15 +52,15 @@ public class SpringBootPlusGenerator {
                 .setFileOverride(true);
 
         // 设置表信息
-        generatorProperties.addTable("document","id");
+        generatorProperties.addTable("users","id");
         // 设置表前缀
         // generatorProperties.setTablePrefix(Arrays.asList("tb_"));
 
         // 数据源配置
         generatorProperties.getDataSourceConfig()
                 .setDbType(DbType.SQL_SERVER)
-                .setUsername("sa")
-                .setPassword("qQ564128566")
+                .setUsername("root")
+                .setPassword("qq564128566")
                 .setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver")
                 .setUrl("jdbc:sqlserver://localhost:1433;database=sa");
 

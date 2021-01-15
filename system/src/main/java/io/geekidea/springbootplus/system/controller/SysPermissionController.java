@@ -16,6 +16,18 @@
 
 package io.geekidea.springbootplus.system.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -31,12 +43,6 @@ import io.geekidea.springbootplus.system.vo.SysPermissionTreeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <pre>
@@ -62,11 +68,16 @@ public class SysPermissionController extends BaseController {
     /**
      * 添加系统权限
      */
-    @PostMapping("/add")
+    @PostMapping("/insert")
     @RequiresPermissions("sys:permission:add")
     @OperationLog(name = "添加系统权限", type = OperationLogType.ADD)
     @ApiOperation(value = "添加系统权限", response = ApiResult.class)
     public ApiResult<Boolean> addSysPermission(@Validated @RequestBody SysPermission sysPermission) throws Exception {
+    	if(sysPermission.getParentId() != null && sysPermission.getParentId() != 0) {
+    		sysPermission.setLevel(2);
+    	}else {
+    		sysPermission.setLevel(1);
+    	}
         boolean flag = sysPermissionService.saveSysPermission(sysPermission);
         return ApiResult.result(flag);
     }
@@ -79,6 +90,11 @@ public class SysPermissionController extends BaseController {
     @OperationLog(name = "添加系统权限", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改系统权限", response = ApiResult.class)
     public ApiResult<Boolean> updateSysPermission(@Validated @RequestBody SysPermission sysPermission) throws Exception {
+    	if(sysPermission.getParentId() != null && sysPermission.getParentId() != 0) {
+    		sysPermission.setLevel(2);
+    	}else {
+    		sysPermission.setLevel(1);
+    	}
         boolean flag = sysPermissionService.updateSysPermission(sysPermission);
         return ApiResult.result(flag);
     }
@@ -136,7 +152,7 @@ public class SysPermissionController extends BaseController {
      * 获取获取菜单树形列表
      * @return
      */
-    @PostMapping("/getAllMenuTree")
+    @GetMapping("/getAllMenuTree")
     @RequiresPermissions("sys:permission:all:menu:tree")
     @OperationLog(name = "获取获取菜单树形列表", type = OperationLogType.OTHER_QUERY)
     @ApiOperation(value = "获取获取菜单树形列表", response = SysPermissionTreeVo.class)
@@ -197,6 +213,19 @@ public class SysPermissionController extends BaseController {
         List<Long> list = sysRolePermissionService.getThreeLevelPermissionIdsByRoleId(roleId);
         return ApiResult.ok(list);
     }
+    
+    /**
+     * 根据角色id获取该对应的所有权限
+     * @return
+     */
+    @GetMapping("/getPermissionByRoleId/{roleId}")
+    @RequiresPermissions("sys:permission:by-role-id")
+    @OperationLog(name = "根据角色id获取该对应的所有权限", type = OperationLogType.OTHER_QUERY)
+    @ApiOperation(value = "根据角色id获取该对应的所有权限", response = ApiResult.class)
+    public ApiResult<List<SysPermissionTreeVo>> getPermissionByRoleId(@PathVariable("roleId") Long roleId) throws Exception {
+        List<SysPermissionTreeVo> list = sysPermissionService.getPermissionByRoleId(roleId);
+        return ApiResult.ok(list);
+    }
 
     /**
      * 获取所有导航树形菜单(一级/二级菜单)
@@ -210,6 +239,18 @@ public class SysPermissionController extends BaseController {
         List<SysPermissionTreeVo> list = sysPermissionService.getNavMenuTree();
         return ApiResult.ok(list);
     }
-
+    
+    /**
+     * 获取一级菜单
+     * @return
+     */
+    @PostMapping("/getOneLevel")
+    @RequiresPermissions("sys:permission:getOneLevel")
+    @OperationLog(name = "获取一级菜单", type = OperationLogType.OTHER_QUERY)
+    @ApiOperation(value = "获取一级菜单", response = ApiResult.class)
+    public ApiResult<List<SysPermission>> OneLevel() throws Exception {
+        List<SysPermission> list = sysPermissionService.OneLevel();
+        return ApiResult.ok(list);
+    }
 }
 

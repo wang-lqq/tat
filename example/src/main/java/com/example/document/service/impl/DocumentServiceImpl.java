@@ -1,5 +1,8 @@
 package com.example.document.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -7,8 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.document.entity.Category;
 import com.example.document.entity.Document;
+import com.example.document.mapper.CategoryMapper;
 import com.example.document.mapper.DocumentMapper;
 import com.example.document.param.DocumentPageParam;
 import com.example.document.service.DocumentService;
@@ -30,6 +36,8 @@ public class DocumentServiceImpl extends BaseServiceImpl<DocumentMapper, Documen
 
     @Autowired
     private DocumentMapper documentMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -61,6 +69,13 @@ public class DocumentServiceImpl extends BaseServiceImpl<DocumentMapper, Documen
 	public Paging<Document> getDocumentPageList(DocumentPageParam documentPageParam,
 			LambdaQueryWrapper<Document> wrapper) throws Exception {
 		Page<Document> page = new PageInfo<>(documentPageParam, OrderItem.desc(getLambdaColumn(Document::getCreateTime)));
+		
+		List<Integer> categoryIdList = new ArrayList<>();
+		List<Category> categoryList = categoryMapper.selectList(Wrappers.emptyWrapper());
+		for (Category category : categoryList) {
+			categoryIdList.add(category.getId());
+		}
+		wrapper.in(Document::getCategoryId, categoryIdList);
         IPage<Document> iPage = documentMapper.selectPage(page, wrapper);
         return new Paging<Document>(iPage);
 	}

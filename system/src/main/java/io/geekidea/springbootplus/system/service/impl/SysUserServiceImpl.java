@@ -16,10 +16,20 @@
 
 package io.geekidea.springbootplus.system.service.impl;
 
+import java.io.Serializable;
+import java.util.Date;
+
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import io.geekidea.springbootplus.config.properties.SpringBootPlusProperties;
 import io.geekidea.springbootplus.framework.common.exception.BusinessException;
 import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
@@ -39,15 +49,6 @@ import io.geekidea.springbootplus.system.service.SysRoleService;
 import io.geekidea.springbootplus.system.service.SysUserService;
 import io.geekidea.springbootplus.system.vo.SysUserQueryVo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
-import java.util.Date;
 
 
 /**
@@ -146,7 +147,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
 
     @Override
     public Paging<SysUserQueryVo> getSysUserPageList(SysUserPageParam sysUserPageParam) throws Exception {
-        Page<SysUserQueryVo> page = new PageInfo<>(sysUserPageParam, OrderItem.desc(getLambdaColumn(SysUser::getCreateTime)));
+        Page<SysUserQueryVo> page = new PageInfo<>(sysUserPageParam);
         IPage<SysUserQueryVo> iPage = sysUserMapper.getSysUserPageList(page, sysUserPageParam);
 
         // 手机号码脱敏处理
@@ -189,9 +190,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
 
     @Override
     public boolean updatePassword(UpdatePasswordParam updatePasswordParam) throws Exception {
-        String oldPassword = updatePasswordParam.getOldPassword();
-        String newPassword = updatePasswordParam.getNewPassword();
-        String confirmPassword = updatePasswordParam.getConfirmPassword();
+        String oldPassword = updatePasswordParam.getOldPasswor();
+        String newPassword = updatePasswordParam.getNewPasswor();
+        String confirmPassword = updatePasswordParam.getConfirmPasswor();
         if (!newPassword.equals(confirmPassword)) {
             throw new BusinessException("两次输入的密码不一致");
         }

@@ -44,14 +44,14 @@ public class UpdatePasswordParam implements Serializable {
 
     @ApiModelProperty("原密码")
     @NotEmpty(message = "原密码不能为空")
-    private String oldPassword;
+    private String oldPasswor;
 
     @ApiModelProperty("新密码")
     @NotEmpty(message = "新密码不能为空")
-    private String newPassword;
+    private String newPasswor;
 
     @ApiModelProperty("新密码")
     @NotEmpty(message = "确认密码不能为空")
-    private String confirmPassword;
+    private String confirmPasswor;
 
 }

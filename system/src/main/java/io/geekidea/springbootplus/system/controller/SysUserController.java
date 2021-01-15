@@ -64,7 +64,7 @@ public class SysUserController extends BaseController {
     /**
      * 添加系统用户
      */
-    @PostMapping("/add")
+    @PostMapping("/insert")
     @RequiresPermissions("sys:user:add")
     @OperationLog(name = "添加系统用户", type = OperationLogType.ADD)
     @ApiOperation(value = "添加系统用户", response = ApiResult.class)

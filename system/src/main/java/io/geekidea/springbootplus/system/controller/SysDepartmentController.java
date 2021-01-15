@@ -16,6 +16,18 @@
 
 package io.geekidea.springbootplus.system.controller;
 
+import java.util.List;
+
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -30,12 +42,6 @@ import io.geekidea.springbootplus.system.vo.SysDepartmentTreeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * <pre>
@@ -58,13 +64,14 @@ public class SysDepartmentController extends BaseController {
     /**
      * 添加部门
      */
-    @PostMapping("/add")
+    @PostMapping("/insert")
     @RequiresPermissions("sys:department:add")
     @OperationLog(name = "添加部门", type = OperationLogType.ADD)
     @ApiOperation(value = "添加部门", response = ApiResult.class)
-    public ApiResult<Boolean> addSysDepartment(@Validated @RequestBody SysDepartment sysDepartment) throws Exception {
-        boolean flag = sysDepartmentService.saveSysDepartment(sysDepartment);
-        return ApiResult.result(flag);
+    public ApiResult<List<SysDepartmentTreeVo>> addSysDepartment(@Validated @RequestBody SysDepartment sysDepartment) throws Exception {
+        sysDepartmentService.saveSysDepartment(sysDepartment);
+        List<SysDepartmentTreeVo> treeVos = sysDepartmentService.getDepartmentTree();
+        return ApiResult.ok(treeVos);
     }
 
     /**
@@ -74,9 +81,10 @@ public class SysDepartmentController extends BaseController {
     @RequiresPermissions("sys:department:update")
     @OperationLog(name = "修改部门", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改部门", response = ApiResult.class)
-    public ApiResult<Boolean> updateSysDepartment(@Validated @RequestBody SysDepartment sysDepartment) throws Exception {
-        boolean flag = sysDepartmentService.updateSysDepartment(sysDepartment);
-        return ApiResult.result(flag);
+    public ApiResult<List<SysDepartmentTreeVo>> updateSysDepartment(@Validated @RequestBody SysDepartment sysDepartment) throws Exception {
+    	sysDepartmentService.updateSysDepartment(sysDepartment);
+        List<SysDepartmentTreeVo> treeVos = sysDepartmentService.getDepartmentTree();
+        return ApiResult.ok(treeVos);
     }
 
     /**
@@ -86,9 +94,10 @@ public class SysDepartmentController extends BaseController {
     @RequiresPermissions("sys:department:delete")
     @OperationLog(name = "删除部门", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除部门", response = ApiResult.class)
-    public ApiResult<Boolean> deleteSysDepartment(@PathVariable("id") Long id) throws Exception {
-        boolean flag = sysDepartmentService.deleteSysDepartment(id);
-        return ApiResult.result(flag);
+    public ApiResult<List<SysDepartmentTreeVo>> deleteSysDepartment(@PathVariable("id") Long id) throws Exception {
+        sysDepartmentService.deleteSysDepartment(id);
+        List<SysDepartmentTreeVo> treeVos = sysDepartmentService.getDepartmentTree();
+        return ApiResult.ok(treeVos);
     }
 
     /**
@@ -111,7 +120,8 @@ public class SysDepartmentController extends BaseController {
     @OperationLog(name = "部门分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "部门分页列表", response = SysDepartmentQueryVo.class)
     public ApiResult<Paging<SysDepartmentQueryVo>> getSysDepartmentPageList(@Validated @RequestBody SysDepartmentPageParam sysDepartmentPageParam) throws Exception {
-        Paging<SysDepartmentQueryVo> paging = sysDepartmentService.getSysDepartmentPageList(sysDepartmentPageParam);
+        
+    	Paging<SysDepartmentQueryVo> paging = sysDepartmentService.getSysDepartmentPageList(sysDepartmentPageParam);
         return ApiResult.ok(paging);
     }
 

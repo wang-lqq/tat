@@ -16,8 +16,18 @@
 
 package io.geekidea.springbootplus.system.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.commons.collections4.SetUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+
 import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
 import io.geekidea.springbootplus.system.entity.SysRolePermission;
 import io.geekidea.springbootplus.system.enums.StateEnum;
@@ -25,14 +35,6 @@ import io.geekidea.springbootplus.system.mapper.SysRoleMapper;
 import io.geekidea.springbootplus.system.mapper.SysRolePermissionMapper;
 import io.geekidea.springbootplus.system.service.SysRolePermissionService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.SetUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 
 /**
@@ -93,9 +95,9 @@ public class SysRolePermissionServiceImpl extends BaseServiceImpl<SysRolePermiss
                     .setRoleId(roleId)
                     .setPermissionId(permissionId)
                     .setState(StateEnum.ENABLE.getCode());
-            list.add(sysRolePermission);
+            save(sysRolePermission);
         });
-        return saveBatch(list, 20);
+		return true;
     }
 
     @Override
@@ -124,5 +126,4 @@ public class SysRolePermissionServiceImpl extends BaseServiceImpl<SysRolePermiss
                 .setRoleId(roleId);
         return count(new QueryWrapper<SysRolePermission>(sysRolePermission)) > 0;
     }
-
 }

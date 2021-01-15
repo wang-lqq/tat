@@ -69,7 +69,7 @@ public class SysUser extends BaseEntity {
     private String salt;
 
     @ApiModelProperty("手机号码")
-    @NotBlank(message = "手机号码不能为空")
+//    @NotBlank(message = "手机号码不能为空")
     private String phone;
 
     @ApiModelProperty("性别，0：女，1：男，默认1")

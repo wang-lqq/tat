@@ -8,16 +8,16 @@ import io.geekidea.springbootplus.framework.core.pagination.BasePageOrderParam;
 
 /**
  * <pre>
- * 类别 分页参数对象
+ *  分页参数对象
  * </pre>
  *
  * @author wanglonglong
- * @date 2021-01-01
+ * @date 2021-01-07
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "类别分页参数")
-public class CategoryPageParam extends BasePageOrderParam {
+@ApiModel(value = "分页参数")
+public class UsersPageParam extends BasePageOrderParam {
     private static final long serialVersionUID = 1L;
 }

@@ -65,6 +65,10 @@ public class SysDepartmentTreeVo implements Serializable {
 
     @ApiModelProperty("修改时间")
     private Date updateTime;
+    
+    private String title;
+    
+    private boolean spread =  true;
 
     private List<SysDepartmentTreeVo> children;
 

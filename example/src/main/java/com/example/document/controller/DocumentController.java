@@ -55,7 +55,7 @@ public class DocumentController extends BaseController {
     /**
      * 添加文档
      */
-    @PostMapping("/add")
+    @PostMapping("/insert")
     @OperationLog(name = "添加文档", type = OperationLogType.ADD)
     @ApiOperation(value = "添加文档", response = ApiResult.class)
     public ApiResult<Boolean> addDocument(@Validated(Add.class) @RequestBody Document document) throws Exception {

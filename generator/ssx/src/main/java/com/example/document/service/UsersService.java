@@ -1,35 +1,35 @@
 package com.example.document.service;
 
-import com.example.document.entity.Document;
-import com.example.document.param.DocumentPageParam;
+import com.example.document.entity.Users;
+import com.example.document.param.UsersPageParam;
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 
 /**
- * 文档 服务类
+ *  服务类
  *
  * @author wanglonglong
- * @since 2021-01-01
+ * @since 2021-01-07
  */
-public interface DocumentService extends BaseService<Document> {
+public interface UsersService extends BaseService<Users> {
 
     /**
      * 保存
      *
-     * @param document
+     * @param users
      * @return
      * @throws Exception
      */
-    boolean saveDocument(Document document) throws Exception;
+    boolean saveUsers(Users users) throws Exception;
 
     /**
      * 修改
      *
-     * @param document
+     * @param users
      * @return
      * @throws Exception
      */
-    boolean updateDocument(Document document) throws Exception;
+    boolean updateUsers(Users users) throws Exception;
 
     /**
      * 删除
@@ -38,16 +38,16 @@ public interface DocumentService extends BaseService<Document> {
      * @return
      * @throws Exception
      */
-    boolean deleteDocument(Long id) throws Exception;
+    boolean deleteUsers(Long id) throws Exception;
 
 
     /**
      * 获取分页对象
      *
-     * @param documentQueryParam
+     * @param usersQueryParam
      * @return
      * @throws Exception
      */
-    Paging<Document> getDocumentPageList(DocumentPageParam documentPageParam) throws Exception;
+    Paging<Users> getUsersPageList(UsersPageParam usersPageParam) throws Exception;
 
 }
