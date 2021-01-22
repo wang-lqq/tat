@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -65,6 +66,13 @@ public class CategoryServiceImpl extends BaseServiceImpl<CategoryMapper, Categor
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteCategory(Long id) throws Exception {
+    	// 分类有文档不能删除
+    	LambdaQueryWrapper<Document> queryWrapper = new LambdaQueryWrapper<>();
+    	queryWrapper.eq(Document::getCategoryId, id);
+    	Document document = documentMapper.selectOne(queryWrapper);
+    	if(document != null) {
+    		return false;
+    	}
         return super.removeById(id);
     }
 

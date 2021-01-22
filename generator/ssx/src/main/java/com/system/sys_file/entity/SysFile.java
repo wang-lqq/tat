@@ -1,4 +1,4 @@
-package com.example.document.entity;
+package com.system.sys_file.entity;
 
 import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -15,44 +15,34 @@ import javax.validation.constraints.NotNull;
 import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 
 /**
- * 文档
+ * 
  *
  * @author wanglonglong
- * @since 2021-01-19
+ * @since 2021-01-20
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "Document对象")
-public class Document extends BaseEntity {
+@ApiModel(value = "SysFile对象")
+public class SysFile extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
-    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+
+    @ApiModelProperty("文件类型")
+    private String fileType;
+
+    @ApiModelProperty("访问链接")
+    private String fileUrl;
+
+    @ApiModelProperty("封面")
+    private String cover;
 
     @ApiModelProperty("创建时间")
     private Date createTime;
 
     @ApiModelProperty("修改时间")
     private Date updateTime;
-
-    @ApiModelProperty("类别id")
-    private Integer categoryId;
-
-    @ApiModelProperty("类别名称")
-    private String categoryName;
-
-    @ApiModelProperty("标题")
-    private String title;
-
-    @ApiModelProperty("内容")
-    private String content;
-
-    @ApiModelProperty("红点")
-    private Integer redDot;
-
-    @ApiModelProperty("排序")
-    private Integer sort;
 
 }

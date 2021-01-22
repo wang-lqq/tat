@@ -67,6 +67,7 @@
           and rp.state = 1
           and p.state = 1
           and u.id = #{userId}
+        order by p.sort desc;
     </select>
 
 </mapper>

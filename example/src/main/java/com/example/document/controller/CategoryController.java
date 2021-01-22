@@ -83,12 +83,6 @@ public class CategoryController extends BaseController {
     	if(StringUtils.isEmpty(category.getName())) {
     		return ApiResult.result(ApiCode.FAIL, null);
     	}
-    	Map<String, Object> columnMap = new HashMap<>();
-    	columnMap.put("name", category.getName());
-    	List<Category> list = categoryService.listByMap(columnMap);
-    	if(CollectionUtil.isNotEmpty(list)) {
-    		 return ApiResult.result(ApiCode.FAIL, null);
-    	}
     	category.setUpdateTime(new Date());
     	boolean flag = categoryService.updateCategory(category);
         return ApiResult.result(flag);

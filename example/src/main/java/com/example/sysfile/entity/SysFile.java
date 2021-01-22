@@ -1,4 +1,4 @@
-package com.example.document.entity;
+package com.example.sysfile.entity;
 
 import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -18,18 +18,23 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 
  *
  * @author wanglonglong
- * @since 2021-01-07
+ * @since 2021-01-20
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "Users对象")
-public class Users extends BaseEntity {
+@ApiModel(value = "SysFile对象")
+public class SysFile extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
-    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
+
+    @ApiModelProperty("文件类型")
+    private String fileType;
+
+    @ApiModelProperty("访问链接")
+    private String fileUrl;
 
     @ApiModelProperty("创建时间")
     private Date createTime;
@@ -37,10 +42,7 @@ public class Users extends BaseEntity {
     @ApiModelProperty("修改时间")
     private Date updateTime;
 
-    @ApiModelProperty("用户名")
-    private String username;
-
-    @ApiModelProperty("密码")
-    private String password;
+    @ApiModelProperty("视频封面")
+    private String frontUrl;
 
 }

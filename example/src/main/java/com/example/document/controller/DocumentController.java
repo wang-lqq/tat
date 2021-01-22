@@ -1,6 +1,8 @@
 package com.example.document.controller;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +62,11 @@ public class DocumentController extends BaseController {
     @ApiOperation(value = "添加文档", response = ApiResult.class)
     public ApiResult<Boolean> addDocument(@Validated(Add.class) @RequestBody Document document) throws Exception {
     	String htmlStr =StringEscapeUtils.unescapeHtml4(document.getContent());
-    	Category category = categoryService.getById(document.getCategoryId());
+    	if(document.getCategoryId() != null && document.getCategoryId() != 0) {
+    		Category category = categoryService.getById(document.getCategoryId());
+    		document.setCategoryName(category.getName());
+    	}
     	document.setContent(htmlStr);
-    	document.setCategoryName(category.getName());
     	document.setUpdateTime(new Date());
     	boolean flag = false;
     	if(document.getId() != null && document.getId() != 0){
@@ -136,6 +140,17 @@ public class DocumentController extends BaseController {
     	Paging<Document> paging = documentService.getDocumentPageList(documentPageParam, wrapper);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 文档列表
+     */
+    @PostMapping("/getList")
+    @OperationLog(name = "文档列表", type = OperationLogType.LIST)
+    @ApiOperation(value = "文档列表", response = Document.class)
+    public ApiResult<List<Map<String, Object>>> getList(@Validated @RequestBody Document document
+    		) throws Exception {
+    	List<Map<String, Object>> data = documentService.getList(document);
+        return ApiResult.ok(data);
+    }
 }
 

@@ -1,24 +1,22 @@
 package com.example.document.entity;
 
-import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.Version;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 
 /**
  * 类别
  *
  * @author wanglonglong
- * @since 2021-01-01
+ * @since 2021-01-18
  */
 @Data
 @Accessors(chain = true)
@@ -42,5 +40,7 @@ public class Category extends BaseEntity {
 
     @ApiModelProperty("父级id")
     private Integer parentId;
+
+    private Integer sort;
 
 }

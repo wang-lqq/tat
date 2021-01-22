@@ -804,11 +804,11 @@ public abstract class BaseLogAop {
                             .setDeviceModel(clientInfo.getDeviceModel());
                 }
                 // 设置IP区域
-                IpAddress ipAddress = ipAddressService.getByIp(requestInfo.getIp());
-                if (ipAddress != null) {
-                    requestInfo.setIpAddress(ipAddress);
-                    sysOperationLog.setArea(ipAddress.getArea()).setOperator(ipAddress.getOperator());
-                }
+//                IpAddress ipAddress = ipAddressService.getByIp(requestInfo.getIp());
+//                if (ipAddress != null) {
+//                    requestInfo.setIpAddress(ipAddress);
+//                    sysOperationLog.setArea(ipAddress.getArea()).setOperator(ipAddress.getOperator());
+//                }
             }
 
             // 设置响应结果

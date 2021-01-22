@@ -1,4 +1,4 @@
-package com.example.document.param;
+package com.example.sysfile.param;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -12,12 +12,12 @@ import io.geekidea.springbootplus.framework.core.pagination.BasePageOrderParam;
  * </pre>
  *
  * @author wanglonglong
- * @date 2021-01-07
+ * @date 2021-01-20
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "分页参数")
-public class UsersPageParam extends BasePageOrderParam {
+public class SysFilePageParam extends BasePageOrderParam {
     private static final long serialVersionUID = 1L;
 }

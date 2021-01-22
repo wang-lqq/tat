@@ -1,11 +1,15 @@
 package com.example.document.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -78,5 +82,29 @@ public class DocumentServiceImpl extends BaseServiceImpl<DocumentMapper, Documen
 		wrapper.in(Document::getCategoryId, categoryIdList);
         IPage<Document> iPage = documentMapper.selectPage(page, wrapper);
         return new Paging<Document>(iPage);
+	}
+
+	@Override
+	public List<Map<String, Object>> getList(Document document) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		
+		LambdaQueryWrapper<Category> wrapperCategory = new LambdaQueryWrapper<>();
+		wrapperCategory.orderByDesc(Category::getSort);
+		List<Category> categories = categoryMapper.selectList(wrapperCategory);
+		for (Category category : categories) {
+			LambdaQueryWrapper<Document> wrapper = new LambdaQueryWrapper<>();
+			wrapper.eq(Document::getCategoryId, category.getId()).orderByDesc(Document::getSort);
+			if(!StringUtils.isEmpty(document.getTitle())) {
+				wrapper.like(Document::getTitle, document.getTitle());
+			}
+			List<Document> documents = documentMapper.selectList(wrapper);
+			if(!CollectionUtils.isEmpty(documents)) {
+				Map<String, Object> data = new HashMap<>();
+				data.put("categoryName", category.getName());
+				data.put("documents", documents);
+				list.add(data);
+			}
+		}
+		return list;
 	}
 }

@@ -56,7 +56,7 @@ spring-boot-plus:
   # 是否启用ansi控制台输出有颜色的字体
   enable-ansi: true
   # 服务器IP地址
-  server-ip: 127.0.0.1
+  server-ip: 172.19.8.112
   # 是否启用验证码
   enable-verify-code: false
   # 默认新建用户登录初始化密码
@@ -119,13 +119,13 @@ spring-boot-plus:
     # 操作日志配置
     operation-log:
       # 是否启用
-      enable: false
+      enable: true
       # 排除的路径
       exclude-paths:
     # 登录日志配置
     login-log:
       # 是否启用
-      enable: false
+      enable: true
       # 登录地址
       login-path: /login
       # 登出地址

@@ -1,9 +1,9 @@
-package com.example.document.controller;
+package com.example.sysfile.controller;
 
-import com.example.document.entity.Users;
-import com.example.document.service.UsersService;
+import com.example.sysfile.entity.SysFile;
+import com.example.sysfile.service.SysFileService;
 import lombok.extern.slf4j.Slf4j;
-import com.example.document.param.UsersPageParam;
+import com.example.sysfile.param.SysFilePageParam;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.*;
  *  控制器
  *
  * @author wanglonglong
- * @since 2021-01-07
+ * @since 2021-01-20
  */
 @Slf4j
 @RestController
-@RequestMapping("/users")
-@Module("document")
+@RequestMapping("/sysFile")
+@Module("sysfile")
 @Api(value = "API", tags = {""})
-public class UsersController extends BaseController {
+public class SysFileController extends BaseController {
 
     @Autowired
-    private UsersService usersService;
+    private SysFileService sysFileService;
 
     /**
      * 添加
@@ -41,8 +41,8 @@ public class UsersController extends BaseController {
     @PostMapping("/add")
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
-    public ApiResult<Boolean> addUsers(@Validated(Add.class) @RequestBody Users users) throws Exception {
-        boolean flag = usersService.saveUsers(users);
+    public ApiResult<Boolean> addSysFile(@Validated(Add.class) @RequestBody SysFile sysFile) throws Exception {
+        boolean flag = sysFileService.saveSysFile(sysFile);
         return ApiResult.result(flag);
     }
 
@@ -52,8 +52,8 @@ public class UsersController extends BaseController {
     @PostMapping("/update")
     @OperationLog(name = "修改", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改", response = ApiResult.class)
-    public ApiResult<Boolean> updateUsers(@Validated(Update.class) @RequestBody Users users) throws Exception {
-        boolean flag = usersService.updateUsers(users);
+    public ApiResult<Boolean> updateSysFile(@Validated(Update.class) @RequestBody SysFile sysFile) throws Exception {
+        boolean flag = sysFileService.updateSysFile(sysFile);
         return ApiResult.result(flag);
     }
 
@@ -63,8 +63,8 @@ public class UsersController extends BaseController {
     @PostMapping("/delete/{id}")
     @OperationLog(name = "删除", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除", response = ApiResult.class)
-    public ApiResult<Boolean> deleteUsers(@PathVariable("id") Long id) throws Exception {
-        boolean flag = usersService.deleteUsers(id);
+    public ApiResult<Boolean> deleteSysFile(@PathVariable("id") Long id) throws Exception {
+        boolean flag = sysFileService.deleteSysFile(id);
         return ApiResult.result(flag);
     }
 
@@ -73,10 +73,10 @@ public class UsersController extends BaseController {
      */
     @GetMapping("/info/{id}")
     @OperationLog(name = "详情", type = OperationLogType.INFO)
-    @ApiOperation(value = "详情", response = Users.class)
-    public ApiResult<Users> getUsers(@PathVariable("id") Long id) throws Exception {
-        Users users = usersService.getById(id);
-        return ApiResult.ok(users);
+    @ApiOperation(value = "详情", response = SysFile.class)
+    public ApiResult<SysFile> getSysFile(@PathVariable("id") Long id) throws Exception {
+        SysFile sysFile = sysFileService.getById(id);
+        return ApiResult.ok(sysFile);
     }
 
     /**
@@ -84,9 +84,9 @@ public class UsersController extends BaseController {
      */
     @PostMapping("/getPageList")
     @OperationLog(name = "分页列表", type = OperationLogType.PAGE)
-    @ApiOperation(value = "分页列表", response = Users.class)
-    public ApiResult<Paging<Users>> getUsersPageList(@Validated @RequestBody UsersPageParam usersPageParam) throws Exception {
-        Paging<Users> paging = usersService.getUsersPageList(usersPageParam);
+    @ApiOperation(value = "分页列表", response = SysFile.class)
+    public ApiResult<Paging<SysFile>> getSysFilePageList(@Validated @RequestBody SysFilePageParam sysFilePageParam) throws Exception {
+        Paging<SysFile> paging = sysFileService.getSysFilePageList(sysFilePageParam);
         return ApiResult.ok(paging);
     }
 

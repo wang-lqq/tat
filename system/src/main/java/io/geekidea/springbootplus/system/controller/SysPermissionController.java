@@ -139,7 +139,7 @@ public class SysPermissionController extends BaseController {
      * 获取所有菜单列表
      * @return
      */
-    @PostMapping("/getAllMenuList")
+    @GetMapping("/getAllMenuList")
     @RequiresPermissions("sys:permission:all:menu:list")
     @OperationLog(name = "获取所有菜单列表", type = OperationLogType.LIST)
     @ApiOperation(value = "获取所有菜单列表", response = SysPermission.class)

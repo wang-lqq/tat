@@ -1,8 +1,12 @@
 package com.example.document.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.document.entity.Document;
 import com.example.document.param.DocumentPageParam;
+
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 
@@ -53,4 +57,6 @@ public interface DocumentService extends BaseService<Document> {
     
     
     Paging<Document> getDocumentPageList(DocumentPageParam documentPageParam, LambdaQueryWrapper<Document> wrapper) throws Exception;
+
+    List<Map<String, Object>> getList(Document document);
 }

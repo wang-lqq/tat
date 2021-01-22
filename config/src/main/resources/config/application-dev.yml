@@ -2,7 +2,7 @@ spring-boot-plus:
   # 是否启用ansi控制台输出有颜色的字体，dev环境建议开启，服务器环境设置为false
   enable-ansi: true
   # 当前环境服务IP地址
-  server-ip: 127.0.0.1
+  server-ip: 172.19.8.112
   # 文件上传下载配置
   upload-path: /opt/upload/
 
