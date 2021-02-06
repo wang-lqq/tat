@@ -100,5 +100,4 @@
         <appender-ref ref="ASYNC_FILE" />
         <appender-ref ref="ASYNC_ERROR_FILE" />
     </root>
-
 </configuration>

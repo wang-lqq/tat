@@ -16,6 +16,17 @@
 
 package io.geekidea.springbootplus.system.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.geekidea.springbootplus.config.properties.SpringBootPlusProperties;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
@@ -35,10 +46,6 @@ import io.geekidea.springbootplus.system.vo.SysUserQueryVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * <pre>
@@ -65,7 +72,7 @@ public class SysUserController extends BaseController {
      * 添加系统用户
      */
     @PostMapping("/insert")
-    @RequiresPermissions("sys:user:add")
+//    @RequiresPermissions("sys:user:add")
     @OperationLog(name = "添加系统用户", type = OperationLogType.ADD)
     @ApiOperation(value = "添加系统用户", response = ApiResult.class)
     public ApiResult<Boolean> addSysUser(@Validated(Add.class) @RequestBody SysUser sysUser) throws Exception {
@@ -77,7 +84,7 @@ public class SysUserController extends BaseController {
      * 修改系统用户
      */
     @PostMapping("/update")
-    @RequiresPermissions("sys:user:update")
+//    @RequiresPermissions("sys:user:update")
     @OperationLog(name = "修改系统用户", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改系统用户", response = ApiResult.class)
     public ApiResult<Boolean> updateSysUser(@Validated(Update.class) @RequestBody SysUser sysUser) throws Exception {
@@ -89,7 +96,7 @@ public class SysUserController extends BaseController {
      * 删除系统用户
      */
     @PostMapping("/delete/{id}")
-    @RequiresPermissions("sys:user:delete")
+//    @RequiresPermissions("sys:user:delete")
     @OperationLog(name = "删除系统用户", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除系统用户", response = ApiResult.class)
     public ApiResult<Boolean> deleteSysUser(@PathVariable("id") Long id) throws Exception {
@@ -102,7 +109,7 @@ public class SysUserController extends BaseController {
      * 根据id获取系统用户
      */
     @GetMapping("/info/{id}")
-    @RequiresPermissions("sys:user:info:id")
+//    @RequiresPermissions("sys:user:info:id")
     @OperationLog(name = "系统用户详情", type = OperationLogType.INFO)
     @ApiOperation(value = "系统用户详情", notes = "", response = SysUserQueryVo.class)
     public ApiResult<SysUserQueryVo> getSysUser(@PathVariable("id") Long id) throws Exception {
@@ -114,7 +121,7 @@ public class SysUserController extends BaseController {
      * 系统用户分页列表
      */
     @PostMapping("/getPageList")
-    @RequiresPermissions("sys:user:page")
+//    @RequiresPermissions("sys:user:page")
     @OperationLog(name = "系统用户分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "系统用户分页列表", response = SysUserQueryVo.class)
     public ApiResult<Paging<SysUserQueryVo>> getSysUserPageList(@Validated @RequestBody SysUserPageParam sysUserPageParam) throws Exception {
@@ -126,7 +133,7 @@ public class SysUserController extends BaseController {
      * 修改密码
      */
     @PostMapping("/updatePassword")
-    @RequiresPermissions("sys:user:update:password")
+//    @RequiresPermissions("sys:user:update:password")
     @OperationLog(name = "修改密码", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改密码", response = ApiResult.class)
     public ApiResult<Boolean> updatePassword(@Validated @RequestBody UpdatePasswordParam updatePasswordParam) throws Exception {
@@ -138,7 +145,7 @@ public class SysUserController extends BaseController {
      * 管理员重置用户密码
      */
     @PostMapping("/resetPassword")
-    @RequiresPermissions("sys:user:reset:password")
+//    @RequiresPermissions("sys:user:reset:password")
     @OperationLog(name = "管理员重置用户密码", type = OperationLogType.UPDATE)
     @ApiOperation(value = "管理员重置用户密码", response = ApiResult.class)
     public ApiResult<Boolean> resetPassword(@Validated @RequestBody ResetPasswordParam resetPasswordParam) throws Exception {
@@ -150,12 +157,25 @@ public class SysUserController extends BaseController {
      * 修改头像
      */
     @PostMapping("/uploadHead")
-    @RequiresPermissions("sys:user:update:head")
+//    @RequiresPermissions("sys:user:update:head")
     @OperationLog(name = "修改头像", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改头像", response = ApiResult.class)
     public ApiResult<Boolean> uploadHead(@Validated @RequestBody UploadHeadParam uploadHeadParam) throws Exception {
         boolean flag = sysUserService.updateSysUserHead(uploadHeadParam.getId(), uploadHeadParam.getHead());
         return ApiResult.result(flag);
+    }
+    
+    /**
+     * 获取系统用户列表
+     *
+     * @return
+     */
+    @PostMapping("/getList")
+//    @RequiresPermissions("sys:user:list")
+    @OperationLog(name = "系统用户列表", type = OperationLogType.LIST)
+    @ApiOperation(value = "系统用户列表", response = SysUser.class)
+    public ApiResult<List<SysUser>> getUserList() {
+        return ApiResult.ok(sysUserService.list());
     }
 }
 

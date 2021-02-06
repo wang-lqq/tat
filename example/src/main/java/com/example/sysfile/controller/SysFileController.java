@@ -1,23 +1,34 @@
 package com.example.sysfile.controller;
 
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.sysfile.entity.SysFile;
-import com.example.sysfile.service.SysFileService;
-import lombok.extern.slf4j.Slf4j;
 import com.example.sysfile.param.SysFilePageParam;
-import io.geekidea.springbootplus.framework.common.controller.BaseController;
+import com.example.sysfile.service.SysFileService;
+
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
+import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.common.param.IdParam;
+import io.geekidea.springbootplus.framework.core.validator.groups.Add;
+import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
-import io.geekidea.springbootplus.framework.core.validator.groups.Add;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
-import org.springframework.validation.annotation.Validated;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  控制器
@@ -42,8 +53,38 @@ public class SysFileController extends BaseController {
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
     public ApiResult<Boolean> addSysFile(@Validated(Add.class) @RequestBody SysFile sysFile) throws Exception {
+    	if(StringUtils.isEmpty(sysFile.getTitle()) || StringUtils.isEmpty(sysFile.getFileUrl())) {
+    		return ApiResult.result(false);
+    	}
+    	int lastIndexOf = sysFile.getFileUrl().lastIndexOf(".");
+    	String suffix = sysFile.getFileUrl().substring(lastIndexOf+1);
+    	sysFile.setFileType(suffix);
         boolean flag = sysFileService.saveSysFile(sysFile);
         return ApiResult.result(flag);
+    }
+    
+    /**
+     * 添加
+     */
+    @PostMapping("/insertList")
+    @OperationLog(name = "添加列表", type = OperationLogType.ADD)
+    @ApiOperation(value = "添加列表", response = ApiResult.class)
+    public ApiResult<Boolean> insertList(@RequestBody List<SysFile> sysFileList) throws Exception {
+    	for (SysFile sysFile : sysFileList) {
+    		if(StringUtils.isEmpty(sysFile.getFileUrl())) {
+    			continue;
+    		}
+    		if(sysFile.getId() != null && sysFile.getId() != 0) {
+    			sysFile.setUpdateTime(new Date());
+    			sysFileService.updateById(sysFile);
+    		}else {
+    			int lastIndexOf = sysFile.getFileUrl().lastIndexOf(".");
+    			String suffix = sysFile.getFileUrl().substring(lastIndexOf+1);
+    			sysFile.setFileType(suffix);
+    			sysFileService.saveSysFile(sysFile);
+    		}
+		}
+        return ApiResult.result(true);
     }
 
     /**
@@ -89,6 +130,22 @@ public class SysFileController extends BaseController {
         Paging<SysFile> paging = sysFileService.getSysFilePageList(sysFilePageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 列表
+     */
+    @PostMapping("/getList")
+    @OperationLog(name = "列表", type = OperationLogType.LIST)
+    @ApiOperation(value = "列表", response = SysFile.class)
+    public ApiResult<List<SysFile>> getSysFileList(@Validated @RequestBody SysFile sysFile) throws Exception {
+    	if(sysFile.getDocumentId() == 0) {
+    		return ApiResult.ok(null);
+        }
+    	LambdaQueryWrapper<SysFile> queryWrapper = new LambdaQueryWrapper<>();
+    	queryWrapper.eq(SysFile::getDocumentId, sysFile.getDocumentId());
+    	queryWrapper.orderByAsc(SysFile::getId);
+    	List<SysFile> list = sysFileService.list(queryWrapper);
+        return ApiResult.ok(list);
+    }
 }
 

@@ -48,7 +48,8 @@ public class LogAop extends BaseLogAop {
      */
     private static final String POINTCUT =
             "execution(public * io.geekidea.springbootplus..*.controller..*.*(..)) || " +
-                    "execution(public * com.example..*.controller..*.*(..))";
+                    "execution(public * com.example..*.controller..*.*(..))" +
+                    "execution(public * com.example..*.controller..*..*.*(..))";
 
     @Around(POINTCUT)
     @Override

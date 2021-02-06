@@ -92,12 +92,17 @@
             <version>${jwt.version}</version>
         </dependency>
         <!-- Shiro+JWT end -->
-
         <dependency>
             <groupId>io.geekidea.springbootplus</groupId>
             <artifactId>config</artifactId>
         </dependency>
-
     </dependencies>
-
+    <!-- <dependencyManagement>
+	    <dependencies>
+	        <dependency>
+	            <groupId>io.geekidea.springbootplus</groupId>
+	            <artifactId>example</artifactId>
+	        </dependency>
+	    </dependencies>
+	</dependencyManagement> -->
 </project>

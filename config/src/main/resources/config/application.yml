@@ -32,7 +32,7 @@ spring:
       # 指定上传文件的临时目录
       location: /opt/upload/tmp
       # 单个文件最大值
-      max-file-size: 10MB
+      max-file-size: 20MB
       # 单个请求文件总计最大值
       max-request-size: 100MB
 
@@ -56,7 +56,7 @@ spring-boot-plus:
   # 是否启用ansi控制台输出有颜色的字体
   enable-ansi: true
   # 服务器IP地址
-  server-ip: 172.19.8.112
+  server-ip: 127.0.0.1
   # 是否启用验证码
   enable-verify-code: false
   # 默认新建用户登录初始化密码
@@ -113,8 +113,8 @@ spring-boot-plus:
       # 请求日志在控制台是否格式化输出，local环境建议开启，服务器环境设置为false
       request-log-format: true
       # 响应日志在控制台是否格式化输出，local环境建议开启，服务器环境设置为false
-      response-log-format: true
-      # 排除的路径
+      response-log-format: false
+      # 排除的路径 /sysOperationLog/export
       exclude-paths: /,/csrf
     # 操作日志配置
     operation-log:
@@ -179,7 +179,7 @@ spring-boot-plus:
   ######################## Spring Shiro start ########################
   shiro:
     # 是否启用
-    enable: false
+    enable: true
     # 权限配置
     anon:
       # 排除登录登出
@@ -190,10 +190,12 @@ spring-boot-plus:
       - ${spring-boot-plus.swagger-paths}
       # 排除actuator
       - /actuator/**
-      - # 排除首页
+      # 排除首页
       - /,/index.html
       # 排除测试路径
       - /hello/world,/fooBar/**,/exampleOrder/**
+      # 排除前台接口
+      - /a/**
     # 多行字符串权限配置
     filter-chain-definitions: |
       /resource/**=anon
@@ -214,8 +216,8 @@ spring-boot-plus:
     issuer: ${spring.application.name}
     # 观众
     audience: web
-    # 默认过期时间1小时，单位：秒
-    expire-second: 36000
+    # 默认过期时间一个月，单位：秒2592000
+    expire-second: 2592000
     # 是否刷新token
     refresh-token: true
     # 刷新token的时间间隔，默认10分钟，单位：秒
@@ -241,6 +243,7 @@ mybatis-plus:
   configuration:
     # 字段名称下划线转驼峰命名
     map-underscore-to-camel-case: true
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       # 全局默认主键类型
@@ -386,4 +389,3 @@ info:
   project-swagger: http://${spring-boot-plus.server-ip}:${server.port}${server.servlet.context-path}/swagger-ui.html
   project-knife4j: http://${spring-boot-plus.server-ip}:${server.port}${server.servlet.context-path}/doc.html
 ############################## Spring boot admin end ###############################
-

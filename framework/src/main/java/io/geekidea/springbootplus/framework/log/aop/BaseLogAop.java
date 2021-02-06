@@ -842,8 +842,6 @@ public abstract class BaseLogAop {
             }
             // 保存日志到数据库
             sysOperationLogService.saveSysOperationLog(sysOperationLog);
-
-
         } catch (Exception e) {
             if (e instanceof JWTDecodeException) {
                 JWTDecodeException jwtDecodeException = (JWTDecodeException) e;
@@ -962,7 +960,7 @@ public abstract class BaseLogAop {
                     }
                     IpAddress ipAddress = requestInfo.getIpAddress();
                     if (ipAddress == null) {
-                        ipAddress = ipAddressService.getByIp(requestInfo.getIp());
+//                        ipAddress = ipAddressService.getByIp(requestInfo.getIp());
                     }
                     if (ipAddress != null) {
                         sysLoginLog.setArea(ipAddress.getArea()).setOperator(ipAddress.getOperator());

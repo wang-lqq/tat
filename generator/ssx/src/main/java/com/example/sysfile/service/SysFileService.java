@@ -9,7 +9,7 @@ import io.geekidea.springbootplus.framework.core.pagination.Paging;
  *  服务类
  *
  * @author wanglonglong
- * @since 2021-01-20
+ * @since 2021-01-25
  */
 public interface SysFileService extends BaseService<SysFile> {
 

@@ -16,16 +16,8 @@
 
 package io.geekidea.springbootplus.framework.log.controller;
 
-import io.geekidea.springbootplus.framework.common.api.ApiResult;
-import io.geekidea.springbootplus.framework.common.controller.BaseController;
-import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.log.entity.SysOperationLog;
-import io.geekidea.springbootplus.framework.log.param.SysOperationLogPageParam;
-import io.geekidea.springbootplus.framework.log.service.SysOperationLogService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +25,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
+
+import io.geekidea.springbootplus.framework.common.api.ApiResult;
+import io.geekidea.springbootplus.framework.common.controller.BaseController;
+import io.geekidea.springbootplus.framework.core.pagination.Paging;
+import io.geekidea.springbootplus.framework.log.annotation.Module;
+import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
+import io.geekidea.springbootplus.framework.log.entity.SysOperationLog;
+import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
+import io.geekidea.springbootplus.framework.log.param.SysOperationLogPageParam;
+import io.geekidea.springbootplus.framework.log.service.SysOperationLogService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 /**
  * 系统操作日志 控制器
  *
@@ -42,6 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/sysOperationLog")
+@Module("log")
 @Api(value = "系统操作日志API", tags = {"系统操作日志"})
 public class SysOperationLogController extends BaseController {
 
@@ -52,12 +59,23 @@ public class SysOperationLogController extends BaseController {
      * 系统操作日志分页列表
      */
     @PostMapping("/getPageList")
-    @RequiresPermissions("sys:operation:log:page")
+//    @RequiresPermissions("sys:operation:log:page")
     @ApiOperation(value = "系统操作日志分页列表", response = SysOperationLog.class)
+    @OperationLog(name = "系统操作日志分页列表", type = OperationLogType.PAGE)
     public ApiResult<Paging<SysOperationLog>> getSysOperationLogPageList(@Validated @RequestBody SysOperationLogPageParam sysOperationLogPageParam) throws Exception {
         Paging<SysOperationLog> paging = sysOperationLogService.getSysOperationLogPageList(sysOperationLogPageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 系统操作日志导出
+     */
+    @PostMapping("/export")
+    @ApiOperation(value = "系统操作日志导出", response = SysOperationLog.class)
+    @OperationLog(name = "系统操作日志导出", type = OperationLogType.EXCEL_EXPORT)
+    public ApiResult<List<SysOperationLog>> export(@RequestBody JSONObject jsonObject) throws Exception {
+        List<SysOperationLog> paging = sysOperationLogService.export(jsonObject);
+        return ApiResult.ok(paging);
+    }
 }
 

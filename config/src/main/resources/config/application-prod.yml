@@ -2,7 +2,9 @@ spring-boot-plus:
   # 是否启用ansi控制台输出有颜色的字体，local环境建议开启，服务器环境设置为false
   enable-ansi: false
   # 当前环境服务IP地址
-  server-ip:
+  server-ip: 172.19.1.36
+  # 文件上传下载配置
+  upload-path: e:/opt/upload/
   # 生产环境禁用Swagger
   swagger:
     enable: false
@@ -16,14 +18,14 @@ spring-boot-plus:
 
 spring:
   datasource:
-    url:
-    username:
-    password:
+    url: jdbc:sqlserver://127.0.0.1:1433;database=ssx_admin
+    username: sa
+    password: aps#2019
 
   # Redis配置
   redis:
-    database:
-    host:
+    database: 0
+    host: localhost
     password:
-    port:
+    port: 6379
 

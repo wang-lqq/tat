@@ -18,7 +18,7 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 
  *
  * @author wanglonglong
- * @since 2021-01-20
+ * @since 2021-01-25
  */
 @Data
 @Accessors(chain = true)
@@ -30,11 +30,17 @@ public class SysFile extends BaseEntity {
     @ApiModelProperty("主键id")
     private Integer id;
 
+    @ApiModelProperty("标题")
+    private String title;
+
     @ApiModelProperty("文件类型")
     private String fileType;
 
     @ApiModelProperty("访问链接")
     private String fileUrl;
+
+    @ApiModelProperty("视频封面")
+    private String frontUrl;
 
     @ApiModelProperty("创建时间")
     private Date createTime;
@@ -42,7 +48,7 @@ public class SysFile extends BaseEntity {
     @ApiModelProperty("修改时间")
     private Date updateTime;
 
-    @ApiModelProperty("视频封面")
-    private String frontUrl;
+    @ApiModelProperty("文档id")
+    private Integer documentId;
 
 }

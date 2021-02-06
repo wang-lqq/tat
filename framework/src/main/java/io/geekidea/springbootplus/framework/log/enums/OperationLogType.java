@@ -84,5 +84,13 @@ public enum OperationLogType implements BaseEnum {
 
     private Integer code;
     private String desc;
-
+    
+	public static OperationLogType getDesc(int code) {
+		for (OperationLogType operationLogType : values()) {
+			if (operationLogType.getCode() == code) {
+				return operationLogType;
+			}
+		}
+		return null;
+	}
 }

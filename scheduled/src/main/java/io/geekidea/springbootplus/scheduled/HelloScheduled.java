@@ -16,9 +16,19 @@
 
 package io.geekidea.springbootplus.scheduled;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.document.entity.Document;
+import com.example.document.service.DocumentService;
+
+import cn.hutool.core.date.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author geekidea
@@ -27,13 +37,28 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class HelloScheduled {
+	
+    @Autowired
+    private DocumentService documentService;
 
     /**
-     * 每小时执行一次
+     * 每天凌晨1点执行一次：0 0 1 * * ?
      */
-    @Scheduled(cron = "0 0 0/1 * * ? ")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void hello() throws Exception {
+    	LambdaQueryWrapper<Document> queryWrapper = new LambdaQueryWrapper<>();
+    	queryWrapper.eq(Document::getRedDot, 1).eq(Document::getRedDotSystem, 1);
+    	List<Document> list = documentService.list(queryWrapper);
+    	for (Document document : list) {
+    		Date now = new Date();
+    		// 偏移3天
+    		Date crateDate = DateUtil.offsetDay(document.getCreateTime(), 3);
+    		if(now.compareTo(crateDate) >= 0) {
+    			document.setRedDot(0);
+    			document.setUpdateTime(now);
+    			documentService.updateById(document);
+    		}
+		}
         log.debug("HelloScheduled...");
     }
-
 }

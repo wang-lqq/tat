@@ -1,15 +1,13 @@
 package com.example.document.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.document.entity.Document;
-import com.example.document.param.DocumentPageParam;
+import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.apache.ibatis.annotations.Param;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.document.entity.Document;
+import com.example.document.entity.OperationLogVo;
 
 /**
  * 文档 Mapper 接口
@@ -20,5 +18,9 @@ import java.io.Serializable;
 @Repository
 public interface DocumentMapper extends BaseMapper<Document> {
 
-
+	List<OperationLogVo> getVisit(@Param("path") String path,@Param("startTime") String startTime, @Param("endTime") String endTime);
+	
+	List<OperationLogVo> getVisitCount(@Param("startTime") String startTime,@Param("endTime") String endTime);
+	
+	List<OperationLogVo> getForward(@Param("startTime") String startTime,@Param("endTime") String endTime);
 }

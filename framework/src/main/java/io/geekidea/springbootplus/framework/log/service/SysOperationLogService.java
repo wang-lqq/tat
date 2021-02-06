@@ -16,6 +16,10 @@
 
 package io.geekidea.springbootplus.framework.log.service;
 
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
+
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import io.geekidea.springbootplus.framework.log.entity.SysOperationLog;
@@ -65,5 +69,7 @@ public interface SysOperationLogService extends BaseService<SysOperationLog> {
      * @throws Exception
      */
     Paging<SysOperationLog> getSysOperationLogPageList(SysOperationLogPageParam sysOperationLogPageParam) throws Exception;
+
+	List<SysOperationLog> export(JSONObject jsonObject);
 
 }

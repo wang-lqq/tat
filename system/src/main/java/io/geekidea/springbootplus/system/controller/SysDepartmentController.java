@@ -18,7 +18,6 @@ package io.geekidea.springbootplus.system.controller;
 
 import java.util.List;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,7 +64,7 @@ public class SysDepartmentController extends BaseController {
      * 添加部门
      */
     @PostMapping("/insert")
-    @RequiresPermissions("sys:department:add")
+//    @RequiresPermissions("sys:department:add")
     @OperationLog(name = "添加部门", type = OperationLogType.ADD)
     @ApiOperation(value = "添加部门", response = ApiResult.class)
     public ApiResult<List<SysDepartmentTreeVo>> addSysDepartment(@Validated @RequestBody SysDepartment sysDepartment) throws Exception {
@@ -78,7 +77,7 @@ public class SysDepartmentController extends BaseController {
      * 修改部门
      */
     @PostMapping("/update")
-    @RequiresPermissions("sys:department:update")
+//    @RequiresPermissions("sys:department:update")
     @OperationLog(name = "修改部门", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改部门", response = ApiResult.class)
     public ApiResult<List<SysDepartmentTreeVo>> updateSysDepartment(@Validated @RequestBody SysDepartment sysDepartment) throws Exception {
@@ -91,7 +90,7 @@ public class SysDepartmentController extends BaseController {
      * 删除部门
      */
     @PostMapping("/delete/{id}")
-    @RequiresPermissions("sys:department:delete")
+//    @RequiresPermissions("sys:department:delete")
     @OperationLog(name = "删除部门", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除部门", response = ApiResult.class)
     public ApiResult<List<SysDepartmentTreeVo>> deleteSysDepartment(@PathVariable("id") Long id) throws Exception {
@@ -104,7 +103,7 @@ public class SysDepartmentController extends BaseController {
      * 获取部门
      */
     @GetMapping("/info/{id}")
-    @RequiresPermissions("sys:department:info")
+//    @RequiresPermissions("sys:department:info")
     @OperationLog(name = "部门详情", type = OperationLogType.INFO)
     @ApiOperation(value = "部门详情", response = SysDepartmentQueryVo.class)
     public ApiResult<SysDepartmentQueryVo> getSysDepartment(@PathVariable("id") Long id) throws Exception {
@@ -116,7 +115,7 @@ public class SysDepartmentController extends BaseController {
      * 部门分页列表
      */
     @PostMapping("/getPageList")
-    @RequiresPermissions("sys:department:page")
+//    @RequiresPermissions("sys:department:page")
     @OperationLog(name = "部门分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "部门分页列表", response = SysDepartmentQueryVo.class)
     public ApiResult<Paging<SysDepartmentQueryVo>> getSysDepartmentPageList(@Validated @RequestBody SysDepartmentPageParam sysDepartmentPageParam) throws Exception {
@@ -129,7 +128,7 @@ public class SysDepartmentController extends BaseController {
      * 获取所有部门列表
      */
     @PostMapping("/getAllDepartmentList")
-    @RequiresPermissions("sys:department:all:list")
+//    @RequiresPermissions("sys:department:all:list")
     @OperationLog(name = "获取所有部门的树形列表", type = OperationLogType.OTHER_QUERY)
     @ApiOperation(value = "获取所有部门的树形列表", response = SysDepartment.class)
     public ApiResult<List<SysDepartment>> getAllDepartmentList() throws Exception {
@@ -143,7 +142,7 @@ public class SysDepartmentController extends BaseController {
      * @return
      */
     @PostMapping("/getDepartmentTree")
-    @RequiresPermissions("sys:department:all:tree")
+//    @RequiresPermissions("sys:department:all:tree")
     @OperationLog(name = "获取所有部门的树形列表", type = OperationLogType.OTHER_QUERY)
     @ApiOperation(value = "获取所有部门的树形列表", response = SysDepartmentTreeVo.class)
     public ApiResult<List<SysDepartmentTreeVo>> getDepartmentTree() throws Exception {
@@ -155,7 +154,7 @@ public class SysDepartmentController extends BaseController {
      * 部门列表
      */
     @PostMapping("/getList")
-    @RequiresPermissions("sys:department:list")
+//    @RequiresPermissions("sys:department:list")
     @OperationLog(name = "部门列表", type = OperationLogType.LIST)
     @ApiOperation(value = "部门列表", response = SysDepartment.class)
     public ApiResult<List<SysDepartment>> getSysDepartmentList() throws Exception {
