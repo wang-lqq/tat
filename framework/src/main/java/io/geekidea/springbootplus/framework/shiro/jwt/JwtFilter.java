@@ -16,15 +16,11 @@
 
 package io.geekidea.springbootplus.framework.shiro.jwt;
 
-import io.geekidea.springbootplus.config.properties.JwtProperties;
-import io.geekidea.springbootplus.framework.common.api.ApiCode;
-import io.geekidea.springbootplus.framework.common.api.ApiResult;
-import io.geekidea.springbootplus.framework.shiro.cache.LoginRedisService;
-import io.geekidea.springbootplus.framework.shiro.service.ShiroLoginService;
-import io.geekidea.springbootplus.framework.shiro.util.JwtTokenUtil;
-import io.geekidea.springbootplus.framework.shiro.util.JwtUtil;
-import io.geekidea.springbootplus.framework.util.HttpServletResponseUtil;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -32,10 +28,17 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import io.geekidea.springbootplus.config.properties.JwtProperties;
+import io.geekidea.springbootplus.framework.common.api.ApiCode;
+import io.geekidea.springbootplus.framework.common.api.ApiResult;
+import io.geekidea.springbootplus.framework.shiro.cache.LoginRedisService;
+import io.geekidea.springbootplus.framework.shiro.service.ShiroLoginService;
+import io.geekidea.springbootplus.framework.shiro.util.CurrentUserUtil;
+import io.geekidea.springbootplus.framework.shiro.util.JwtTokenUtil;
+import io.geekidea.springbootplus.framework.shiro.util.JwtUtil;
+import io.geekidea.springbootplus.framework.shiro.vo.LoginSysUserVo;
+import io.geekidea.springbootplus.framework.util.HttpServletResponseUtil;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Shiro JWT授权过滤器
@@ -84,8 +87,9 @@ public class JwtFilter extends AuthenticatingFilter {
                 throw new AuthenticationException("Redis Token不存在,token:" + token);
             }
         }
-
         String username = JwtUtil.getUsername(token);
+        LoginSysUserVo loginSysUserVo = loginRedisService.getLoginSysUserVo(username);
+        CurrentUserUtil.setUser(loginSysUserVo);
         String salt;
         if (jwtProperties.isSaltCheck()){
             salt = loginRedisService.getSalt(username);

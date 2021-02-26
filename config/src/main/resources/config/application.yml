@@ -359,7 +359,11 @@ spring:
         status-lifetime: 100000
         connect-timeout: 100000
         read-timeout: 100000
-
+  mail:
+    host: 172.19.1.10
+    username: System@ksx.stertec.co.jp
+    password: system#2017
+    port: 25
 # 开启和暴露端点
 management:
   endpoint:
@@ -389,3 +393,4 @@ info:
   project-swagger: http://${spring-boot-plus.server-ip}:${server.port}${server.servlet.context-path}/swagger-ui.html
   project-knife4j: http://${spring-boot-plus.server-ip}:${server.port}${server.servlet.context-path}/doc.html
 ############################## Spring boot admin end ###############################
+#email

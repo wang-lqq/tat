@@ -28,4 +28,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SpringBootPlusApplication.class)
 public class BaseTest {
+	public static void main(String[] args) {
+		String progress = (1/(double)10)*100  + "%";
+		System.out.println(progress);
+	}
 }

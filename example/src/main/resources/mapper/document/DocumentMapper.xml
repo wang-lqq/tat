@@ -20,7 +20,7 @@
 	</select>
 	
 	<select id="getForward" parameterType="java.lang.String" resultType="com.example.document.entity.OperationLogVo">
-		select top 4 path, COUNT(1) visits from sys_operation_log where 
+		select top 10 path, COUNT(1) visits from sys_operation_log where 
 		user_id is null and name = '文档详情' and create_time <![CDATA[ >= ]]> #{startTime}
 		<if test="endTime != null and endTime !=''">
 		 and create_time <![CDATA[ <= ]]> #{endTime}

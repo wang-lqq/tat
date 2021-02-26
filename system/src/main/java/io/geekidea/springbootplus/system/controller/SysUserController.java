@@ -65,9 +65,6 @@ public class SysUserController extends BaseController {
     @Autowired
     private SysUserService sysUserService;
 
-    @Autowired
-    private SpringBootPlusProperties springBootPlusProperties;
-
     /**
      * 添加系统用户
      */

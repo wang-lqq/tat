@@ -1,0 +1,46 @@
+<span>以下工单请帮忙确认维修</span>
+<br />
+<br />
+<table class="layui-table" border="1">
+  <thead style="background-color: yellow;">
+    <tr>
+      <th>工单号</th>
+      <th>申请人姓名</th>
+      <th>联系电话</th>
+	  <th>部门</th>
+	  <th>资产编码</th>
+	  <th>报修类别</th>
+	  <th>设备名称</th>
+	  <th>型号</th>
+	  <th>机械编号</th>
+	  <th>申请时间</th>
+	  <th>希望完成时间</th>
+	  <th>报修问题</th>
+	  <th>工单状态</th>
+    </tr> 
+  </thead>
+  <tbody>
+    <tr style="text-align: center;">
+	  <td th:text="${data.workOrderNo}"></td>
+      <td th:text="${data.fullName}"></td>
+      <td th:text="${data.telephone}"></td>
+	  <td th:text="${data.departmentName}"></td>
+	  <td th:text="${data.assetCode}"></td>
+	  <td th:text="${data.category}"></td>
+	  <td th:text="${data.equipmentName}"></td>
+	  <td th:text="${data.model}"></td>
+	  <td th:text="${data.machineNumber}"></td>
+	  <td th:text="${data.createTime}"></td>
+	  <td th:text="${data.completionTime}"></td>
+	  <td th:text="${data.repairProblems}"></td>
+	  <td th:text="${data.repairAuditFullName}"></td>
+    </tr>
+  </tbody>
+</table>
+<br />
+复制以下链接，在浏览器中打开审核<br />
+<br />
+http://172.19.8.112:81/ssx-admin/index.html#/layui/reportExamine
+<br />
+<br />
+以上，谢谢！

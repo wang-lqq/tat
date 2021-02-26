@@ -135,4 +135,13 @@ public interface SysUserService extends BaseService<SysUser> {
      * @throws Exception
      */
     boolean resetPassword(ResetPasswordParam resetPasswordParam) throws Exception;
+    
+    /**
+     * 通过部门ID，查询同部门报修提交审核人员email
+     * @param departmentId
+     * @return
+     */
+    String getReportExamineEmail(Long departmentId, String roleCode);
+    
+    String[] getRepairEmail(String roleCode);
 }

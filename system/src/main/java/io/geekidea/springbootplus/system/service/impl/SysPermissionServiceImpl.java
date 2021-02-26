@@ -134,9 +134,13 @@ public class SysPermissionServiceImpl extends BaseServiceImpl<SysPermissionMappe
 
     @Override
     public List<SysPermission> getAllMenuList() throws Exception {
-        SysPermission sysPermission = new SysPermission().setState(StateEnum.ENABLE.getCode());
+//        SysPermission sysPermission = new SysPermission().setState(StateEnum.ENABLE.getCode());
         // 获取所有已启用的权限列表
-        return sysPermissionMapper.selectList(new QueryWrapper(sysPermission));
+//        Wrapper wrapper = new QueryWrapper(sysPermission);
+        Wrapper wrapper = lambdaQuery()
+                .eq(SysPermission::getState, StateEnum.ENABLE.getCode()).orderByDesc(SysPermission::getSort)
+                .getWrapper();
+        return sysPermissionMapper.selectList(wrapper);
     }
 
     @Override

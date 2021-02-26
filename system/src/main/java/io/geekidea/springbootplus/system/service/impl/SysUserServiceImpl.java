@@ -17,7 +17,10 @@
 package io.geekidea.springbootplus.system.service.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +29,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -38,6 +42,7 @@ import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import io.geekidea.springbootplus.framework.shiro.util.SaltUtil;
 import io.geekidea.springbootplus.framework.util.PasswordUtil;
 import io.geekidea.springbootplus.framework.util.PhoneUtil;
+import io.geekidea.springbootplus.system.entity.SysRole;
 import io.geekidea.springbootplus.system.entity.SysUser;
 import io.geekidea.springbootplus.system.enums.StateEnum;
 import io.geekidea.springbootplus.system.mapper.SysUserMapper;
@@ -260,4 +265,40 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
                 .setUpdateTime(new Date());
         return updateById(updateSysUser);
     }
+
+	@Override
+	public String getReportExamineEmail(Long departmentId, String roleCode) {
+		String email = "";
+		LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+    	wrapper.eq(SysUser::getDepartmentId, departmentId);
+    	List<SysUser> sysUsers = this.list(wrapper);
+    	for (SysUser sysUser : sysUsers) {
+    		SysRole sysRole = sysRoleService.getById(sysUser.getRoleId());
+    		if(sysRole.getCode().equals(roleCode)) {// 提交审核人
+    			email = sysUser.getEmail();// 审核人邮箱
+    		}
+		}
+    	return email;
+	}
+	
+	@Override
+	public String[] getRepairEmail(String roleCode) {
+		LambdaQueryWrapper<SysRole> wrapper = new LambdaQueryWrapper<>();
+    	wrapper.like(SysRole::getCode, roleCode);
+    	List<SysRole> sysRoles = sysRoleService.list(wrapper);
+    	
+    	List<Long> roleIds = new ArrayList<Long>();
+    	for (SysRole sysRole : sysRoles) {
+    		roleIds.add(sysRole.getId());
+		}
+    	
+    	LambdaQueryWrapper<SysUser> sysWrapper = new LambdaQueryWrapper<>();
+    	sysWrapper.in(SysUser::getRoleId, roleIds);
+    	List<SysUser> sysUsers = this.list(sysWrapper);
+    	String[] emails = new String[sysUsers.size()];
+    	for (int i = 0; i < sysUsers.size(); i++) {
+    		emails[i] = sysUsers.get(i).getEmail();
+		}
+    	return emails;
+	}
 }
