@@ -19,7 +19,7 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 联络-维修单表
  *
  * @author wanglonglong
- * @since 2021-02-26
+ * @since 2021-03-01
  */
 @Data
 @Accessors(chain = true)
@@ -106,7 +106,7 @@ public class WorkRepairReport extends BaseEntity {
     private String servicePersonal;
 
     @ApiModelProperty("报修部门核实人")
-    private byte[] departmentVerifier;
+    private String departmentVerifier;
 
     @ApiModelProperty("维修部门长审核用户id")
     private Integer repairExamineUserId;

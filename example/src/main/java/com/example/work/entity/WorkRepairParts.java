@@ -52,4 +52,25 @@ public class WorkRepairParts extends BaseEntity {
     @ApiModelProperty("修改时间")
     private Date updateTime;
 
+    @ApiModelProperty("配件名称")
+    private String accessoryName;
+
+    @ApiModelProperty("物料代码")
+    private String materialCode;
+
+    @ApiModelProperty("品牌")
+    private String brand;
+
+    @ApiModelProperty("规格")
+    private String specifications;
+
+    @ApiModelProperty("单位")
+    private String company;
+
+    @ApiModelProperty("供应商名称")
+    private String supplierName;
+
+    @ApiModelProperty("备注")
+    private String remarks;
+
 }

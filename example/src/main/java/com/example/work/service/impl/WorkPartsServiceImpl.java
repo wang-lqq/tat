@@ -4,6 +4,7 @@ import com.example.work.entity.WorkParts;
 import com.example.work.mapper.WorkPartsMapper;
 import com.example.work.service.WorkPartsService;
 import com.example.work.param.WorkPartsPageParam;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -12,8 +13,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -50,9 +54,16 @@ public class WorkPartsServiceImpl extends BaseServiceImpl<WorkPartsMapper, WorkP
     @Override
     public Paging<WorkParts> getWorkPartsPageList(WorkPartsPageParam workPartsPageParam) throws Exception {
         Page<WorkParts> page = new PageInfo<>(workPartsPageParam, OrderItem.desc(getLambdaColumn(WorkParts::getCreateTime)));
+        
         LambdaQueryWrapper<WorkParts> wrapper = new LambdaQueryWrapper<>();
+        String keyword = workPartsPageParam.getKeyword();
+    	if(!StringUtils.isEmpty(keyword)) {
+    		keyword = StringEscapeUtils.unescapeHtml4(keyword);
+    		JSONObject obj = JSONObject.parseObject(keyword);
+    		String condition = obj.getString("condition");
+    		wrapper.like(WorkParts::getAccessoryName, condition).or().like(WorkParts::getMaterialCode, condition);
+    	}
         IPage<WorkParts> iPage = workPartsMapper.selectPage(page, wrapper);
         return new Paging<WorkParts>(iPage);
     }
-
 }

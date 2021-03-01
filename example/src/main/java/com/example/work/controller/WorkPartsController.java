@@ -1,23 +1,31 @@
 package com.example.work.controller;
 
+import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.work.entity.WorkParts;
-import com.example.work.service.WorkPartsService;
-import lombok.extern.slf4j.Slf4j;
 import com.example.work.param.WorkPartsPageParam;
-import io.geekidea.springbootplus.framework.common.controller.BaseController;
+import com.example.work.service.WorkPartsService;
+
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
+import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.common.param.IdParam;
+import io.geekidea.springbootplus.framework.core.validator.groups.Add;
+import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
-import io.geekidea.springbootplus.framework.core.validator.groups.Add;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
-import org.springframework.validation.annotation.Validated;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 配件表 控制器
@@ -42,7 +50,18 @@ public class WorkPartsController extends BaseController {
     @OperationLog(name = "添加配件表", type = OperationLogType.ADD)
     @ApiOperation(value = "添加配件表", response = ApiResult.class)
     public ApiResult<Boolean> addWorkParts(@Validated(Add.class) @RequestBody WorkParts workParts) throws Exception {
-        boolean flag = workPartsService.saveWorkParts(workParts);
+    	boolean flag = false;
+    	if(workParts.getId() == null || workParts.getId() == 0) {
+    		flag = workPartsService.saveWorkParts(workParts);
+    		String materialCode = "GA"+String.format("%05d", workParts.getId());
+    		workParts.setMaterialCode(materialCode);
+    		workParts.setUpdateTime(new Date());
+    		workPartsService.updateById(workParts);
+    	}else {
+    		workParts.setUpdateTime(new Date());
+    		flag = workPartsService.updateById(workParts);
+            return ApiResult.result(flag);
+    	}
         return ApiResult.result(flag);
     }
 
