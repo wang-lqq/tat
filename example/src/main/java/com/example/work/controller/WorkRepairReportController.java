@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.work.entity.WorkRepairReport;
+import com.example.work.enums.StatusEnum;
 import com.example.work.param.WorkRepairReportPageParam;
 import com.example.work.service.WorkRepairReportService;
 
@@ -27,6 +28,8 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
+import io.geekidea.springbootplus.framework.shiro.util.CurrentUserUtil;
+import io.geekidea.springbootplus.framework.shiro.vo.LoginSysUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -76,10 +79,17 @@ public class WorkRepairReportController extends BaseController {
     public ApiResult<Boolean> updateWorkRepairReport(@Validated(Update.class) @RequestBody WorkRepairReport workRepairReport) throws Exception {
     	boolean flag = false;
         if(!StringUtils.isEmpty(workRepairReport.getWorkOrderNo())) {
+        	if(StatusEnum.UNDER_REPAIR.getCode() == workRepairReport.getStatus()) { // 维修中
+        		String progress = 4/(double)10*100 +"%";
+        		workRepairReport.setProgress(progress);
+        	}
+        	if(StatusEnum.REPAIR_COMPLETE.getCode() == workRepairReport.getStatus()) { // 维修完成
+        		String progress = 6/(double)10*100 +"%";
+        		workRepairReport.setProgress(progress);
+        	}
         	LambdaQueryWrapper<WorkRepairReport> wrapper = new LambdaQueryWrapper<>();
         	wrapper.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
         	flag = workRepairReportService.update(workRepairReport, wrapper);
-        	
         }else {
         	flag = workRepairReportService.updateWorkRepairReport(workRepairReport);
         }
@@ -115,9 +125,28 @@ public class WorkRepairReportController extends BaseController {
     @OperationLog(name = "联络-维修单表分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "联络-维修单表分页列表", response = WorkRepairReport.class)
     public ApiResult<Paging<WorkRepairReport>> getWorkRepairReportPageList(@Validated @RequestBody WorkRepairReportPageParam workRepairReportPageParam) throws Exception {
-        Paging<WorkRepairReport> paging = workRepairReportService.getWorkRepairReportPageList(workRepairReportPageParam);
+    	Paging<WorkRepairReport> paging = workRepairReportService.getWorkRepairReportPageList(workRepairReportPageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 联络-维修单表提交审核
+     */
+    @PostMapping("/repairExamine")
+    @OperationLog(name = "联络-维修单表提交审核", type = OperationLogType.UPDATE)
+    @ApiOperation(value = "联络-维修单表提交审核", response = WorkRepairReport.class)
+    public ApiResult<Boolean> repairExamine(@RequestBody WorkRepairReport workRepairReport) throws Exception {
+    	if(workRepairReport.getStatus() == 1) { // 同意审核
+    		// 算进度
+    		String progress = (2/(double)10)*100+"%";
+    		workRepairReport.setProgress(progress);
+    	}
+    	LoginSysUserVo vo = CurrentUserUtil.getUserIfLogin();
+    	workRepairReport.setRepairAuditUserId(vo.getId().intValue());
+    	workRepairReport.setRepairAuditFullName(vo.getNickname());
+    	workRepairReport.setRepairAuditTime(new Date());
+    	boolean flag = workRepairReportService.updateById(workRepairReport);
+        return ApiResult.ok(flag);
+    }
 }
 
