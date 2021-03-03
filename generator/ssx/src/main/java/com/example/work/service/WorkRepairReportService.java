@@ -9,7 +9,7 @@ import io.geekidea.springbootplus.framework.core.pagination.Paging;
  * 联络-维修单表 服务类
  *
  * @author wanglonglong
- * @since 2021-03-01
+ * @since 2021-03-02
  */
 public interface WorkRepairReportService extends BaseService<WorkRepairReport> {
 

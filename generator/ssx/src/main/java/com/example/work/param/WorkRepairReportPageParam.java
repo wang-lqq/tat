@@ -12,7 +12,7 @@ import io.geekidea.springbootplus.framework.core.pagination.BasePageOrderParam;
  * </pre>
  *
  * @author wanglonglong
- * @date 2021-03-01
+ * @date 2021-03-02
  */
 @Data
 @Accessors(chain = true)

@@ -3,7 +3,9 @@ package com.example.work.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkParts;
 import com.example.work.entity.WorkRepairParts;
+import com.example.work.entity.WorkRepairReport;
 import com.example.work.param.WorkRepairPartsPageParam;
 import com.example.work.service.WorkPartsService;
 import com.example.work.service.WorkRepairPartsService;
@@ -123,7 +127,7 @@ public class WorkRepairPartsController extends BaseController {
     @OperationLog(name = "维修配件表分页列表", type = OperationLogType.PAGE)
     @ApiOperation(value = "维修配件表分页列表", response = WorkRepairParts.class)
     public ApiResult<Paging<WorkRepairParts>> getWorkRepairPartsPageList(@Validated @RequestBody WorkRepairPartsPageParam workRepairPartsPageParam) throws Exception {
-        Paging<WorkRepairParts> paging = workRepairPartsService.getWorkRepairPartsPageList(workRepairPartsPageParam);
+    	Paging<WorkRepairParts> paging = workRepairPartsService.getWorkRepairPartsPageList(workRepairPartsPageParam);
         List<WorkRepairParts> repairParts = paging.getRecords();
         if(CollectionUtil.isNotEmpty(repairParts)) {
         	WorkRepairParts countParts = new WorkRepairParts();

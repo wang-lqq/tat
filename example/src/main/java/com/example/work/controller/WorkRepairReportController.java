@@ -61,10 +61,13 @@ public class WorkRepairReportController extends BaseController {
     	if(workRepairReport.getId() != null && workRepairReport.getId() != 0) {
     		flag = workRepairReportService.updateById(workRepairReport);
     	}else {
+    		LoginSysUserVo vo = CurrentUserUtil.getUserIfLogin();
     		String format = DateUtil.format(new Date(),"yyyyMMddHHmmss");
     		String numbers = RandomUtil.randomNumbers(5);
     		String liushui = "W"+format+numbers;
     		workRepairReport.setWorkOrderNo(liushui);
+    		workRepairReport.setDepartmentId(vo.getDepartmentId().intValue());
+    		workRepairReport.setDepartmentName(vo.getDepartmentName());
     		flag = workRepairReportService.saveWorkRepairReport(workRepairReport);
     	}
         return ApiResult.result(flag);
@@ -77,19 +80,39 @@ public class WorkRepairReportController extends BaseController {
     @OperationLog(name = "修改联络-维修单表", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改联络-维修单表", response = ApiResult.class)
     public ApiResult<Boolean> updateWorkRepairReport(@Validated(Update.class) @RequestBody WorkRepairReport workRepairReport) throws Exception {
-    	boolean flag = false;
+    	boolean flag = true;
         if(!StringUtils.isEmpty(workRepairReport.getWorkOrderNo())) {
         	if(StatusEnum.UNDER_REPAIR.getCode() == workRepairReport.getStatus()) { // 维修中
-        		String progress = 4/(double)10*100 +"%";
+        		String progress = 5/(double)10*100 +"%";
         		workRepairReport.setProgress(progress);
+        		
+        		LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
+    			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
+    			flag = workRepairReportService.update(workRepairReport, wp);
         	}
         	if(StatusEnum.REPAIR_COMPLETE.getCode() == workRepairReport.getStatus()) { // 维修完成
-        		String progress = 6/(double)10*100 +"%";
-        		workRepairReport.setProgress(progress);
+        		LambdaQueryWrapper<WorkRepairReport> wrapper = new LambdaQueryWrapper<>();
+        		wrapper.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo()).select(WorkRepairReport::getStatus);
+        		WorkRepairReport wr = workRepairReportService.getOne(wrapper);
+        		if(wr.getStatus() == StatusEnum.UNDER_REPAIR.getCode()) { // 维修中才更新维修完成
+        			String progress = 7.5/(double)10*100 +"%";
+        			workRepairReport.setProgress(progress);
+        			workRepairReport.setRepairCompletionTime(new Date());
+        			
+        			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
+        			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
+        			flag = workRepairReportService.update(workRepairReport, wp);
+        		}else if(wr.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {// 维修完成->维修完成
+        			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
+        			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
+        			flag = workRepairReportService.update(workRepairReport, wp);
+        		}else if(wr.getStatus() == StatusEnum.COMPLETE_AGREE.getCode()) {// 维修完成->维修审核
+        			workRepairReport.setStatus(null);
+        			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
+        			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
+        			flag = workRepairReportService.update(workRepairReport, wp);
+        		}
         	}
-        	LambdaQueryWrapper<WorkRepairReport> wrapper = new LambdaQueryWrapper<>();
-        	wrapper.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
-        	flag = workRepairReportService.update(workRepairReport, wrapper);
         }else {
         	flag = workRepairReportService.updateWorkRepairReport(workRepairReport);
         }
@@ -136,15 +159,23 @@ public class WorkRepairReportController extends BaseController {
     @OperationLog(name = "联络-维修单表提交审核", type = OperationLogType.UPDATE)
     @ApiOperation(value = "联络-维修单表提交审核", response = WorkRepairReport.class)
     public ApiResult<Boolean> repairExamine(@RequestBody WorkRepairReport workRepairReport) throws Exception {
-    	if(workRepairReport.getStatus() == 1) { // 同意审核
-    		// 算进度
-    		String progress = (2/(double)10)*100+"%";
-    		workRepairReport.setProgress(progress);
-    	}
     	LoginSysUserVo vo = CurrentUserUtil.getUserIfLogin();
-    	workRepairReport.setRepairAuditUserId(vo.getId().intValue());
-    	workRepairReport.setRepairAuditFullName(vo.getNickname());
-    	workRepairReport.setRepairAuditTime(new Date());
+    	if(workRepairReport.getStatus() == StatusEnum.AGREE.getCode()) { // 同意审核
+    		// 算进度
+    		String progress = (2.5/(double)10)*100+"%";
+    		workRepairReport.setProgress(progress);
+    		workRepairReport.setRepairAuditUserId(vo.getId().intValue());
+    		workRepairReport.setRepairAuditFullName(vo.getNickname());
+    		workRepairReport.setRepairAuditTime(new Date());
+    	}
+    	if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode()) { // 维修部门长同意审核
+    		// 算进度
+    		String progress = (10/(double)10)*100+"%";
+    		workRepairReport.setProgress(progress);
+    		workRepairReport.setRepairExamineUserId(vo.getId().intValue());
+    		workRepairReport.setRepairExamineFullName(vo.getNickname());
+    		workRepairReport.setRepairExamineTime(new Date());
+    	}
     	boolean flag = workRepairReportService.updateById(workRepairReport);
         return ApiResult.ok(flag);
     }

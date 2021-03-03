@@ -6,8 +6,7 @@ public enum StatusEnum {
 	AGREE(1, "同意审核"),
 	UNDER_REPAIR(2, "维修中"),
 	REPAIR_COMPLETE(3, "维修完成"),
-	COMPLETE_REFUSE(4, "维修审核拒绝"),
-	COMPLETE_AGREE(5, "维修同意审核");
+	COMPLETE_AGREE(4, "维修审核");
 	
 	private Integer code;
 	
