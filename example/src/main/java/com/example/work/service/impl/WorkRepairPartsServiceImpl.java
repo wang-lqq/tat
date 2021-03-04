@@ -61,7 +61,7 @@ public class WorkRepairPartsServiceImpl extends BaseServiceImpl<WorkRepairPartsM
     		JSONObject obj = JSONObject.parseObject(keyword);
     		String workOrderNo = obj.getString("workOrderNo");
     		if(!StringUtils.isEmpty(workOrderNo)) {
-    			wrapper.ge(WorkRepairParts::getWorkOrderNo, workOrderNo);
+    			wrapper.eq(WorkRepairParts::getWorkOrderNo, workOrderNo);
     		}
     	}
     	Page<WorkRepairParts> page = new PageInfo<>(workRepairPartsPageParam, OrderItem.desc(getLambdaColumn(WorkRepairParts::getCreateTime)));

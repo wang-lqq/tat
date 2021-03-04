@@ -61,7 +61,7 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     	Map<String, Object> data = object2Map(wr);
     	data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 		data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
-    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
+//    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
         return b;
     }
 
@@ -88,6 +88,8 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		String fullName = obj.getString("fullName");
     		String assetCode = obj.getString("assetCode");
     		String equipmentName = obj.getString("equipmentName");
+    		String servicePersonal = obj.getString("servicePersonal");
+    		String agency = obj.getString("agency");
     		if(!StringUtils.isEmpty(status)) {
     			wrapper.ge(WorkRepairReport::getStatus, status);
     		}
@@ -99,6 +101,12 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		}
     		if(!StringUtils.isEmpty(equipmentName)) {
     			wrapper.like(WorkRepairReport::getEquipmentName, equipmentName);
+    		}
+    		if(!StringUtils.isEmpty(servicePersonal)) {
+    			wrapper.like(WorkRepairReport::getServicePersonal, servicePersonal);
+    		}
+    		if(!StringUtils.isEmpty(agency)) {
+    			wrapper.eq(WorkRepairReport::getAgency, agency);
     		}
     	}
     	Page<WorkRepairReport> page = new PageInfo<>(workRepairReportPageParam, OrderItem.desc(getLambdaColumn(WorkRepairReport::getCreateTime)));

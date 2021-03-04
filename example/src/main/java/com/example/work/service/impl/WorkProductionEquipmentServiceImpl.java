@@ -1,20 +1,25 @@
 package com.example.work.service.impl;
 
-import com.example.work.entity.WorkProductionEquipment;
-import com.example.work.mapper.WorkProductionEquipmentMapper;
-import com.example.work.service.WorkProductionEquipmentService;
-import com.example.work.param.WorkProductionEquipmentPageParam;
+import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
-import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import org.springframework.transaction.annotation.Transactional;
+import com.example.work.entity.WorkProductionEquipment;
+import com.example.work.mapper.WorkProductionEquipmentMapper;
+import com.example.work.param.WorkProductionEquipmentPageParam;
+import com.example.work.service.WorkProductionEquipmentService;
+
+import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
+import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
+import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 设备表 服务实现类
@@ -32,7 +37,7 @@ public class WorkProductionEquipmentServiceImpl extends BaseServiceImpl<WorkProd
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveWorkProductionEquipment(WorkProductionEquipment workProductionEquipment) throws Exception {
-        return super.save(workProductionEquipment);
+        return super.saveOrUpdate(workProductionEquipment);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -51,6 +56,23 @@ public class WorkProductionEquipmentServiceImpl extends BaseServiceImpl<WorkProd
     public Paging<WorkProductionEquipment> getWorkProductionEquipmentPageList(WorkProductionEquipmentPageParam workProductionEquipmentPageParam) throws Exception {
         Page<WorkProductionEquipment> page = new PageInfo<>(workProductionEquipmentPageParam, OrderItem.desc(getLambdaColumn(WorkProductionEquipment::getCreateTime)));
         LambdaQueryWrapper<WorkProductionEquipment> wrapper = new LambdaQueryWrapper<>();
+        String keyword = workProductionEquipmentPageParam.getKeyword();
+    	if(!StringUtils.isEmpty(keyword)) {
+    		keyword = StringEscapeUtils.unescapeHtml4(keyword);
+    		JSONObject obj = JSONObject.parseObject(keyword);
+    		String assetCode = obj.getString("assetCode");
+    		String equipmentName = obj.getString("equipmentName");
+    		String machineNumber = obj.getString("machineNumber");
+    		if(!StringUtils.isEmpty(assetCode)) {
+    			wrapper.like(WorkProductionEquipment::getAssetCode, assetCode);
+    		}
+    		if(!StringUtils.isEmpty(equipmentName)) {
+    			wrapper.like(WorkProductionEquipment::getEquipmentName, equipmentName);
+    		}
+    		if(!StringUtils.isEmpty(machineNumber)) {
+    			wrapper.like(WorkProductionEquipment::getMachineNumber, machineNumber);
+    		}
+    	}
         IPage<WorkProductionEquipment> iPage = workProductionEquipmentMapper.selectPage(page, wrapper);
         return new Paging<WorkProductionEquipment>(iPage);
     }

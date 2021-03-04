@@ -194,7 +194,7 @@ public class WorkRepairReportController extends BaseController {
     		data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
     		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER.getRoleCode());
-    		mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject(), EmailEnum.REPORT_ORDER.getTemplate(), data);
+//    		mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject(), EmailEnum.REPORT_ORDER.getTemplate(), data);
     	}
     	if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode()) { // 维修部门长同意审核
     		// 算进度
