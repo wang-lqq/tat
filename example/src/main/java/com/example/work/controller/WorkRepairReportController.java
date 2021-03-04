@@ -1,6 +1,10 @@
 package com.example.work.controller;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -12,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.work.entity.WorkRepairReport;
+import com.example.work.enums.EmailEnum;
 import com.example.work.enums.StatusEnum;
 import com.example.work.param.WorkRepairReportPageParam;
+import com.example.work.service.MailService;
 import com.example.work.service.WorkRepairReportService;
 
 import cn.hutool.core.date.DateUtil;
@@ -30,6 +38,7 @@ import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
 import io.geekidea.springbootplus.framework.shiro.util.CurrentUserUtil;
 import io.geekidea.springbootplus.framework.shiro.vo.LoginSysUserVo;
+import io.geekidea.springbootplus.system.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +58,10 @@ public class WorkRepairReportController extends BaseController {
 
     @Autowired
     private WorkRepairReportService workRepairReportService;
+    @Autowired
+    private MailService mailService;
+    @Autowired
+    private SysUserService sysUserService;
 
     /**
      * 添加联络-维修单表
@@ -92,9 +105,9 @@ public class WorkRepairReportController extends BaseController {
         	}
         	if(StatusEnum.REPAIR_COMPLETE.getCode() == workRepairReport.getStatus()) { // 维修完成
         		LambdaQueryWrapper<WorkRepairReport> wrapper = new LambdaQueryWrapper<>();
-        		wrapper.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo()).select(WorkRepairReport::getStatus);
+        		wrapper.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
         		WorkRepairReport wr = workRepairReportService.getOne(wrapper);
-        		if(wr.getStatus() == StatusEnum.UNDER_REPAIR.getCode()) { // 维修中才更新维修完成
+        		if(wr.getStatus() == StatusEnum.UNDER_REPAIR.getCode() || wr.getStatus() == StatusEnum.AGREE.getCode()) { // 维修中才更新维修完成
         			String progress = 7.5/(double)10*100 +"%";
         			workRepairReport.setProgress(progress);
         			workRepairReport.setRepairCompletionTime(new Date());
@@ -102,6 +115,13 @@ public class WorkRepairReportController extends BaseController {
         			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
         			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
         			flag = workRepairReportService.update(workRepairReport, wp);
+        			// 发送邮件->报修审核人
+        			String email = sysUserService.getReportExamineEmail(wr.getDepartmentId().longValue(), EmailEnum.REPORT_COMPLETE.getRoleCode());
+        			Map<String, Object> data = object2Map(wr);
+        			data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
+        			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
+        			data.put("repairCompletionTime", DateUtil.formatDate(new Date()));
+        	    	mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
         		}else if(wr.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {// 维修完成->维修完成
         			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
         			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
@@ -167,6 +187,14 @@ public class WorkRepairReportController extends BaseController {
     		workRepairReport.setRepairAuditUserId(vo.getId().intValue());
     		workRepairReport.setRepairAuditFullName(vo.getNickname());
     		workRepairReport.setRepairAuditTime(new Date());
+    		// 发送邮件
+    		WorkRepairReport wr = workRepairReportService.getById(workRepairReport.getId());
+    		wr.setRepairAuditFullName("已审核->"+vo.getNickname());
+    		Map<String, Object> data = object2Map(wr);
+    		data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
+			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
+    		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER.getRoleCode());
+    		mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject(), EmailEnum.REPORT_ORDER.getTemplate(), data);
     	}
     	if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode()) { // 维修部门长同意审核
     		// 算进度
@@ -176,8 +204,23 @@ public class WorkRepairReportController extends BaseController {
     		workRepairReport.setRepairExamineFullName(vo.getNickname());
     		workRepairReport.setRepairExamineTime(new Date());
     	}
+    	if(workRepairReport.getStatus() == StatusEnum.REFUSE.getCode()) {
+    		workRepairReport.setRepairAuditUserId(vo.getId().intValue());
+    		workRepairReport.setRepairAuditFullName(vo.getNickname());
+    		workRepairReport.setRepairAuditTime(new Date());
+    	}
     	boolean flag = workRepairReportService.updateById(workRepairReport);
         return ApiResult.ok(flag);
+    }
+    
+    private Map<String, Object> object2Map(Object object){
+        JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
+        Set<Entry<String,Object>> entrySet = jsonObject.entrySet();
+        Map<String, Object> map=new HashMap<String,Object>();
+        for (Entry<String, Object> entry : entrySet) {
+            map.put(entry.getKey(), entry.getValue());
+        }
+        return map;
     }
 }
 

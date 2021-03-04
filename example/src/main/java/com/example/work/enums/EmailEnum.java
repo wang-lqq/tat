@@ -3,7 +3,8 @@ package com.example.work.enums;
 public enum EmailEnum {
 	
 	REPORT_EXAMINE("report_examine", "报修工单审核", "templateReport"),
-	REPORT_ORDER("repair", "报修工单", "templateRepair");
+	REPORT_ORDER("repair", "报修工单联络", "templateRepair"),
+	REPORT_COMPLETE("report_examine", "报修工单处理完成提醒", "complete");
 	
 	// 邮件接受者角色编码
 	private String roleCode;
