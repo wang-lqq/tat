@@ -26,7 +26,7 @@
     <sql id="BaseQuerySelect">
         select
             u.id, u.username, u.nickname, u.phone, u.gender, u.head, u.remark,
-            u.state, u.department_id, u.role_id, u.deleted, u.create_time, u.update_time,
+            u.state, u.department_id, u.role_id, u.deleted, u.create_time, u.update_time, u.email,
             d.name as departmentName,
             r.name as roleName
         from sys_user u

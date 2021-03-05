@@ -85,5 +85,8 @@ public class SysUserQueryVo implements Serializable {
 
     @ApiModelProperty("角色名称")
     private String roleName;
+    
+    @ApiModelProperty("邮箱")
+    private String email;
 
 }

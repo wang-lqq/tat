@@ -19,7 +19,6 @@ package io.geekidea.springbootplus.system.service.impl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -111,7 +110,6 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
         if (StringUtils.isBlank(sysUser.getHead())) {
             sysUser.setHead(springBootPlusProperties.getLoginInitHead());
         }
-
         // 保存系统用户
         return super.save(sysUser);
     }
@@ -135,7 +133,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUserMapper, SysUser> 
                 .setState(sysUser.getState())
                 .setDepartmentId(sysUser.getDepartmentId())
                 .setRoleId(sysUser.getRoleId())
-                .setUpdateTime(new Date());
+                .setUpdateTime(new Date())
+                .setEmail(sysUser.getEmail());
         return super.updateById(updateSysUser);
     }
 
