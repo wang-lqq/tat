@@ -1,5 +1,7 @@
 package com.example.work.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,9 +27,16 @@ import com.example.work.enums.StatusEnum;
 import com.example.work.param.WorkRepairReportPageParam;
 import com.example.work.service.MailService;
 import com.example.work.service.WorkRepairReportService;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.pdf.AcroFields;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import io.geekidea.springbootplus.config.properties.SpringBootPlusProperties;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -62,6 +71,8 @@ public class WorkRepairReportController extends BaseController {
     private MailService mailService;
     @Autowired
     private SysUserService sysUserService;
+    @Autowired
+    private SpringBootPlusProperties springBootPlusProperties;
 
     /**
      * 添加联络-维修单表
@@ -211,6 +222,62 @@ public class WorkRepairReportController extends BaseController {
     	}
     	boolean flag = workRepairReportService.updateById(workRepairReport);
         return ApiResult.ok(flag);
+    }
+    
+    
+    /**
+     * 工单打印
+     */
+    @PostMapping("/print")
+    @OperationLog(name = "打印", type = OperationLogType.download)
+    @ApiOperation(value = "打印", response = WorkRepairReport.class)
+    public ApiResult<Boolean> print(@RequestBody WorkRepairReport workRepairReport) throws Exception {
+        //填充创建pdf
+        PdfReader reader = null;
+        PdfStamper stamp = null;
+        try {
+        	String path = "C:/WINDOWS/Fonts/simhei.ttf";//windows里的字体资源路径
+            BaseFont bf = BaseFont.createFont(path, BaseFont.IDENTITY_H, BaseFont.NOT_EMBEDDED);
+            Font font = new Font(bf, 10f, Font.NORMAL, BaseColor.BLACK);
+//        	File file = new File("D:\\demo.pdf");
+//    		//创建文件
+//    		file.createNewFile();
+			/*
+			 * ClassPathResource classPathResource = new
+			 * ClassPathResource("templates/套打模版.pdf"); InputStream inputStream
+			 * =classPathResource.getInputStream();
+			 */
+//        	InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("templates/tdmb.pdf");
+            reader = new PdfReader("E:/tdmb.pdf");
+            //创建生成报告名称
+            String root = springBootPlusProperties.getUploadPath();
+            if (!new File(root).exists()) {
+            	new File(root).mkdirs();
+            }
+            File deskFile = new File("D:\\demo.pdf");
+//            boolean b = deskFile.createNewFile();
+            stamp = new PdfStamper(reader, new FileOutputStream(deskFile));
+            //取出报表模板中的所有字段
+            AcroFields form = stamp.getAcroFields();
+            form.addSubstitutionFont(bf);
+            // 填充数据
+            stamp.setFormFlattening(true);
+            form.setField("telephone", "17137831663");
+            form.setField("workOrderNo", "W2021030416183259105");
+            form.setField("category", "A");
+            form.setField("fullName", "葛小伦");
+//            System.out.println(b);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (stamp != null) {
+                stamp.close();
+            }
+            if (reader != null) {
+                reader.close();
+            }
+        }
+        return ApiResult.ok();
     }
     
     private Map<String, Object> object2Map(Object object){
