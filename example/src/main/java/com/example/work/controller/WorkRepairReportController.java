@@ -2,8 +2,10 @@ package com.example.work.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,11 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.work.entity.WorkRepairParts;
 import com.example.work.entity.WorkRepairReport;
 import com.example.work.enums.EmailEnum;
 import com.example.work.enums.StatusEnum;
 import com.example.work.param.WorkRepairReportPageParam;
 import com.example.work.service.MailService;
+import com.example.work.service.WorkRepairPartsService;
 import com.example.work.service.WorkRepairReportService;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Font;
@@ -34,6 +38,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
 import io.geekidea.springbootplus.config.properties.SpringBootPlusProperties;
@@ -67,6 +72,8 @@ public class WorkRepairReportController extends BaseController {
 
     @Autowired
     private WorkRepairReportService workRepairReportService;
+    @Autowired
+    private WorkRepairPartsService workRepairPartsService;
     @Autowired
     private MailService mailService;
     @Autowired
@@ -167,9 +174,45 @@ public class WorkRepairReportController extends BaseController {
     @GetMapping("/info/{id}")
     @OperationLog(name = "联络-维修单表详情", type = OperationLogType.INFO)
     @ApiOperation(value = "联络-维修单表详情", response = WorkRepairReport.class)
-    public ApiResult<WorkRepairReport> getWorkRepairReport(@PathVariable("id") Long id) throws Exception {
+    public ApiResult<Map<String, Object>> getWorkRepairReport(@PathVariable("id") Long id) throws Exception {
         WorkRepairReport workRepairReport = workRepairReportService.getById(id);
-        return ApiResult.ok(workRepairReport);
+        LambdaQueryWrapper<WorkRepairParts> wp = new LambdaQueryWrapper<>();
+        wp.eq(WorkRepairParts::getWorkOrderNo, workRepairReport.getWorkOrderNo());
+        List<WorkRepairParts> list = workRepairPartsService.list(wp);
+        
+        List<Map<String, Object>> partList = new ArrayList<>();
+        if(CollectionUtil.isNotEmpty(list)) {
+        	double countMoney = 0;
+        	for (WorkRepairParts workRepairParts : list) {
+        		partList.add(object2Map(workRepairParts));
+        		countMoney += workRepairParts.getMoney();
+        	}
+        	
+        	WorkRepairParts countParts = new WorkRepairParts();
+        	countParts.setMoney(countMoney);
+        	Map<String, Object> countPartsMap = object2Map(countParts);
+        	countPartsMap.put("unitPrice", "维修总费用");
+        	partList.add(countPartsMap);
+        }
+        Map<String, Object> data = object2Map(workRepairReport);
+        data.put("createTime", DateUtil.format(workRepairReport.getCreateTime(),"yyyy-MM-dd HH:mm"));
+        if(workRepairReport.getCompletionTime() != null) {
+        	data.put("completionTime", DateUtil.formatDate(workRepairReport.getCompletionTime()));
+        }
+        if(workRepairReport.getRepairCompletionTime() != null) {
+        	data.put("repairCompletionTime", DateUtil.formatDate(workRepairReport.getRepairCompletionTime()));
+        }
+        data.put("repairParts", partList);
+        if(workRepairReport.getAgency() == null || workRepairReport.getAgency() == 0) {
+        	data.put("agency", "社内");
+        }
+        if(workRepairReport.getAgency() != null && workRepairReport.getAgency() == 1) {
+        	data.put("agency", "社外");
+        }
+        if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode() || workRepairReport.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {
+        	data.put("status", "已完成");
+        }
+        return ApiResult.ok(data);
     }
 
     /**
@@ -283,7 +326,7 @@ public class WorkRepairReportController extends BaseController {
     private Map<String, Object> object2Map(Object object){
         JSONObject jsonObject = (JSONObject) JSON.toJSON(object);
         Set<Entry<String,Object>> entrySet = jsonObject.entrySet();
-        Map<String, Object> map=new HashMap<String,Object>();
+        Map<String, Object> map=new LinkedHashMap<String,Object>();
         for (Entry<String, Object> entry : entrySet) {
             map.put(entry.getKey(), entry.getValue());
         }
