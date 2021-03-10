@@ -1,25 +1,23 @@
 package com.example.work.entity;
 
-import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.Version;
-import com.baomidou.mybatisplus.annotation.TableId;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+
+import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 
 /**
  * 联络-维修单表
  *
  * @author wanglonglong
- * @since 2021-03-02
+ * @since 2021-03-10
  */
 @Data
 @Accessors(chain = true)
@@ -131,5 +129,8 @@ public class WorkRepairReport extends BaseEntity {
 
     @ApiModelProperty("报修完成效果图片")
     private String completePicture;
+
+    @ApiModelProperty("图片附件")
+    private String enclosure;
 
 }

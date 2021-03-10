@@ -19,7 +19,7 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 联络-维修单表
  *
  * @author wanglonglong
- * @since 2021-03-02
+ * @since 2021-03-10
  */
 @Data
 @Accessors(chain = true)
@@ -131,5 +131,8 @@ public class WorkRepairReport extends BaseEntity {
 
     @ApiModelProperty("报修完成效果图片")
     private String completePicture;
+
+    @ApiModelProperty("图片附件")
+    private String enclosure;
 
 }

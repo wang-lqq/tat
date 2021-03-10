@@ -3,6 +3,7 @@ package com.example.work.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -112,6 +113,10 @@ public class WorkRepairReportController extends BaseController {
     @ApiOperation(value = "修改联络-维修单表", response = ApiResult.class)
     public ApiResult<Boolean> updateWorkRepairReport(@Validated(Update.class) @RequestBody WorkRepairReport workRepairReport) throws Exception {
     	boolean flag = true;
+    	WorkRepairReport wrr = new WorkRepairReport();
+    	if(workRepairReport.getId() != null && workRepairReport.getId() != 0) {
+    		wrr = workRepairReportService.getById(workRepairReport.getId());
+    	}
         if(!StringUtils.isEmpty(workRepairReport.getWorkOrderNo())) {
         	if(StatusEnum.UNDER_REPAIR.getCode() == workRepairReport.getStatus()) { // 维修中
         		String progress = 5/(double)10*100 +"%";
@@ -151,6 +156,29 @@ public class WorkRepairReportController extends BaseController {
         			flag = workRepairReportService.update(workRepairReport, wp);
         		}
         	}
+        }else if((!StringUtils.isEmpty(workRepairReport.getEnclosure())) ||
+        		(StringUtils.isEmpty(workRepairReport.getEnclosure()) && !StringUtils.isEmpty(wrr.getEnclosure()))){
+        	WorkRepairReport wr = workRepairReportService.getById(workRepairReport.getId());
+        	String oleEnclosure = wr.getEnclosure();
+        	String newEnclosure = workRepairReport.getEnclosure();
+        	List<String> oleEnclosureList = new ArrayList<>();
+        	List<String> newEnclosureList = new ArrayList<>();
+        	if(!StringUtils.isEmpty(oleEnclosure)) {
+        		oleEnclosureList = new ArrayList<>(Arrays.asList(oleEnclosure.split(",")));
+        	}
+        	if(!StringUtils.isEmpty(newEnclosure)) {
+        		newEnclosureList = new ArrayList<>(Arrays.asList(newEnclosure.split(",")));
+        	}
+        	// 删除旧文件
+        	oleEnclosureList.removeAll(newEnclosureList);
+        	for (String str : oleEnclosureList) {
+        		String imgPath = springBootPlusProperties.getUploadPath()+str.substring(str.lastIndexOf("/")+1);
+        		File file = new File(imgPath);
+        		if(file.exists()) {
+        			file.delete();
+        		}
+			}
+        	workRepairReportService.updateById(workRepairReport);
         }else {
         	flag = workRepairReportService.updateWorkRepairReport(workRepairReport);
         }
