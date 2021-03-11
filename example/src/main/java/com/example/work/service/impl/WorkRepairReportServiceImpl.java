@@ -61,7 +61,7 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     	Map<String, Object> data = object2Map(wr);
     	data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 		data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
-//    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
+    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
         return b;
     }
 
@@ -79,6 +79,9 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
 
     @Override
     public Paging<WorkRepairReport> getWorkRepairReportPageList(WorkRepairReportPageParam workRepairReportPageParam) throws Exception {
+    	LoginSysUserVo userVo = CurrentUserUtil.getUserIfLogin();
+    	Long departmentId = userVo.getDepartmentId();
+    	
     	LambdaQueryWrapper<WorkRepairReport> wrapper = new LambdaQueryWrapper<>();
     	String keyword = workRepairReportPageParam.getKeyword();
     	if(!StringUtils.isEmpty(keyword)) {
@@ -108,6 +111,11 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		if(!StringUtils.isEmpty(agency)) {
     			wrapper.eq(WorkRepairReport::getAgency, agency);
     		}
+    	}
+    	
+    	String roleCode = userVo.getRoleCode();
+    	if(!roleCode.contains("admin")) {
+    		wrapper.eq(WorkRepairReport::getDepartmentId, departmentId.intValue());
     	}
     	Page<WorkRepairReport> page = new PageInfo<>(workRepairReportPageParam, OrderItem.desc(getLambdaColumn(WorkRepairReport::getCreateTime)));
         IPage<WorkRepairReport> iPage = workRepairReportMapper.selectPage(page, wrapper);
