@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableField;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,7 +18,7 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 联络-维修单表
  *
  * @author wanglonglong
- * @since 2021-03-10
+ * @since 2021-03-12
  */
 @Data
 @Accessors(chain = true)
@@ -48,7 +47,6 @@ public class WorkRepairReport extends BaseEntity {
     private Integer departmentId;
 
     @ApiModelProperty("申请人所在部门")
-    @TableField("departmentName")
     private String departmentName;
 
     @ApiModelProperty("希望报修完成时间")

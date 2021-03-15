@@ -61,7 +61,7 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     	Map<String, Object> data = object2Map(wr);
     	data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 		data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
-    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
+    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
         return b;
     }
 
@@ -114,7 +114,7 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     	}
     	
     	String roleCode = userVo.getRoleCode();
-    	if(!roleCode.contains("admin")) {
+    	if(!roleCode.contains("admin") && !roleCode.contains("repair")) {
     		wrapper.eq(WorkRepairReport::getDepartmentId, departmentId.intValue());
     	}
     	Page<WorkRepairReport> page = new PageInfo<>(workRepairReportPageParam, OrderItem.desc(getLambdaColumn(WorkRepairReport::getCreateTime)));

@@ -4,6 +4,7 @@ public enum EmailEnum {
 	
 	REPORT_EXAMINE("report_examine", "报修工单审核", "templateReport"),
 	REPORT_ORDER("repair", "报修工单联络", "templateRepair"),
+	REPORT_ORDER_EXAMINE("repair_examine", "工单已处理完成待审核", "templateRepairExamine"),
 	REPORT_COMPLETE("report_examine", "报修工单处理完成提醒", "complete");
 	
 	// 邮件接受者角色编码

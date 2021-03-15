@@ -1,4 +1,4 @@
-<span>以下报修工单请帮忙审核</span>
+<span>工单已处理完成待审核</span>
 <br />
 <br />
 <table class="layui-table" border="1">
@@ -15,6 +15,7 @@
 	  <th>机械编号</th>
 	  <th>申请时间</th>
 	  <th>希望完成时间</th>
+	  <th>维修完成时间</th>
 	  <th>报修问题</th>
 	  <th>工单状态</th>
     </tr> 
@@ -32,16 +33,19 @@
 	  <td th:text="${data.machineNumber}"></td>
 	  <td th:text="${data.createTime}"></td>
 	  <td th:text="${data.completionTime}"></td>
+	  <td th:text="${data.repairCompletionTime}"></td>
 	  <td th:text="${data.repairProblems}"></td>
-	  <td>待部门长审核</td>
+	  <td>已处理->待审核</td>
     </tr>
   </tbody>
 </table>
 <br />
-<a href="http://127.0.0.1:8848/ssx-admin/index.html#/layui/report">点击跳转审核</a>
+你好，<span th:text="${data.workOrderNo}"></span>号工单已处理完毕，请帮忙审核<br />
+<br />
+<a href="http://127.0.0.1:8848/ssx-admin/index.html#/layui/workOrderManagement">点击跳转审核</a>
 <br />
 <br />
-链接：http://127.0.0.1:8848/ssx-admin/index.html#/layui/report
+链接：http://127.0.0.1:8848/ssx-admin/index.html#/layui/workOrderManagement
 <br />
 <br />
 以上，谢谢！

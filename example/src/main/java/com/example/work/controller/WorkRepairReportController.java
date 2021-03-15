@@ -121,7 +121,6 @@ public class WorkRepairReportController extends BaseController {
         	if(StatusEnum.UNDER_REPAIR.getCode() == workRepairReport.getStatus()) { // 维修中
         		String progress = 5/(double)10*100 +"%";
         		workRepairReport.setProgress(progress);
-        		
         		LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
     			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
     			flag = workRepairReportService.update(workRepairReport, wp);
@@ -138,13 +137,13 @@ public class WorkRepairReportController extends BaseController {
         			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
         			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
         			flag = workRepairReportService.update(workRepairReport, wp);
-        			// 发送邮件->报修审核人
-        			String email = sysUserService.getReportExamineEmail(wr.getDepartmentId().longValue(), EmailEnum.REPORT_COMPLETE.getRoleCode());
-        			Map<String, Object> data = object2Map(wr);
-        			data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
+        			// 发送邮件->维修审核人
+            		Map<String, Object> data = object2Map(wr);
+            		data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
         			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
-        			data.put("repairCompletionTime", DateUtil.formatDate(new Date()));
-        	    	mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
+        			data.put("repairCompletionTime", DateUtil.formatDate(wr.getRepairCompletionTime()));
+            		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER_EXAMINE.getRoleCode());
+            		mailService.sendMail(to, EmailEnum.REPORT_ORDER_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER_EXAMINE.getTemplate(), data);
         		}else if(wr.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {// 维修完成->维修完成
         			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
         			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
@@ -276,7 +275,7 @@ public class WorkRepairReportController extends BaseController {
     		data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
     		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER.getRoleCode());
-    		mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject(), EmailEnum.REPORT_ORDER.getTemplate(), data);
+    		mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER.getTemplate(), data);
     	}
     	if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode()) { // 维修部门长同意审核
     		// 算进度
@@ -285,6 +284,14 @@ public class WorkRepairReportController extends BaseController {
     		workRepairReport.setRepairExamineUserId(vo.getId().intValue());
     		workRepairReport.setRepairExamineFullName(vo.getNickname());
     		workRepairReport.setRepairExamineTime(new Date());
+    		// 发送邮件->报修部门长
+    		WorkRepairReport wrr = workRepairReportService.getById(workRepairReport.getId());
+			String email = sysUserService.getReportExamineEmail(wrr.getDepartmentId().longValue(), EmailEnum.REPORT_COMPLETE.getRoleCode());
+			Map<String, Object> data = object2Map(wrr);
+			data.put("createTime", DateUtil.format(wrr.getCreateTime(),"yyyy-MM-dd HH:mm"));
+			data.put("completionTime", DateUtil.formatDate(wrr.getCompletionTime()));
+			data.put("repairCompletionTime", DateUtil.formatDate(wrr.getRepairCompletionTime()));
+	    	mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
     	}
     	if(workRepairReport.getStatus() == StatusEnum.REFUSE.getCode()) {
     		workRepairReport.setRepairAuditUserId(vo.getId().intValue());
