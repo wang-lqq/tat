@@ -3,9 +3,7 @@ package com.example.work.controller;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,11 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
-import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkParts;
 import com.example.work.entity.WorkRepairParts;
-import com.example.work.entity.WorkRepairReport;
 import com.example.work.param.WorkRepairPartsPageParam;
 import com.example.work.service.WorkPartsService;
 import com.example.work.service.WorkRepairPartsService;
@@ -68,7 +65,8 @@ public class WorkRepairPartsController extends BaseController {
     	workRepairParts.setAccessoryName(workParts.getAccessoryName());
     	workRepairParts.setMaterialCode(workParts.getMaterialCode());
     	workRepairParts.setBrand(workParts.getBrand());
-    	workRepairParts.setSpecifications(workParts.getSpecifications());
+    	String specifications= HtmlUtils.htmlUnescape(workParts.getSpecifications());
+    	workRepairParts.setSpecifications(specifications);
     	workRepairParts.setCompany(workParts.getCompany());
     	workRepairParts.setSupplierName(workParts.getSupplierName());
     	workRepairParts.setRemarks(workParts.getRemarks());
@@ -94,6 +92,8 @@ public class WorkRepairPartsController extends BaseController {
         	double money = unitPrice.multiply(number).doubleValue();
         	workRepairParts.setMoney(money);
         }
+        String specifications= HtmlUtils.htmlUnescape(workRepairParts.getSpecifications());
+    	workRepairParts.setSpecifications(specifications);
         boolean	flag = workRepairPartsService.updateWorkRepairParts(workRepairParts);
         return ApiResult.result(flag);
     }

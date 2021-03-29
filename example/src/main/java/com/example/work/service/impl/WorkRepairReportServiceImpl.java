@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,15 +55,24 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveWorkRepairReport(WorkRepairReport workRepairReport) throws Exception {
+    	LoginSysUserVo userVo = CurrentUserUtil.getUserIfLogin();
+    	
     	boolean b = super.save(workRepairReport);
     	WorkRepairReport wr = workRepairReportMapper.selectById(workRepairReport.getId());
     	// 发送邮件->给部门长
     	LoginSysUserVo vo = CurrentUserUtil.getUserIfLogin();
     	String email = sysUserService.getReportExamineEmail(vo.getDepartmentId(), EmailEnum.REPORT_EXAMINE.getRoleCode());
+    	if(userVo.getRoleCode().equals(EmailEnum.REPORT_ORDER.getRoleCode())) {
+    		email = sysUserService.getReportExamineEmail(vo.getDepartmentId(), EmailEnum.REPORT_ORDER_EXAMINE.getRoleCode());
+    	}
     	Map<String, Object> data = object2Map(wr);
     	data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 		data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
-    	mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
+    	try {
+			mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
         return b;
     }
 
@@ -81,6 +92,7 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     public Paging<WorkRepairReport> getWorkRepairReportPageList(WorkRepairReportPageParam workRepairReportPageParam) throws Exception {
     	LoginSysUserVo userVo = CurrentUserUtil.getUserIfLogin();
     	Long departmentId = userVo.getDepartmentId();
+    	String type = "";
     	
     	LambdaQueryWrapper<WorkRepairReport> wrapper = new LambdaQueryWrapper<>();
     	String keyword = workRepairReportPageParam.getKeyword();
@@ -93,6 +105,10 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		String equipmentName = obj.getString("equipmentName");
     		String servicePersonal = obj.getString("servicePersonal");
     		String agency = obj.getString("agency");
+    		String workOrderNo = obj.getString("workOrderNo");
+    		String machineNumber = obj.getString("machineNumber");
+    		String model = obj.getString("model");
+    		type = obj.getString("type");
     		if(!StringUtils.isEmpty(status)) {
     			wrapper.ge(WorkRepairReport::getStatus, status);
     		}
@@ -111,10 +127,21 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		if(!StringUtils.isEmpty(agency)) {
     			wrapper.eq(WorkRepairReport::getAgency, agency);
     		}
+    		if(!StringUtils.isEmpty(workOrderNo)) {
+    			wrapper.like(WorkRepairReport::getWorkOrderNo, workOrderNo);
+    		}
+    		if(!StringUtils.isEmpty(model)) {
+    			wrapper.like(WorkRepairReport::getModel, model);
+    		}
+    		if(!StringUtils.isEmpty(machineNumber)) {
+    			wrapper.like(WorkRepairReport::getMachineNumber, machineNumber);
+    		}
     	}
-    	
     	String roleCode = userVo.getRoleCode();
     	if(!roleCode.contains("admin") && !roleCode.contains("repair")) {
+    		wrapper.eq(WorkRepairReport::getDepartmentId, departmentId.intValue());
+    	}
+    	if(roleCode.contains("repair") && "1".equals(type)) {
     		wrapper.eq(WorkRepairReport::getDepartmentId, departmentId.intValue());
     	}
     	Page<WorkRepairReport> page = new PageInfo<>(workRepairReportPageParam, OrderItem.desc(getLambdaColumn(WorkRepairReport::getCreateTime)));

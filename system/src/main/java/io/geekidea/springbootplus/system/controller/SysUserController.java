@@ -36,6 +36,7 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
+import io.geekidea.springbootplus.framework.shiro.util.CurrentUserUtil;
 import io.geekidea.springbootplus.system.entity.SysUser;
 import io.geekidea.springbootplus.system.param.sysuser.ResetPasswordParam;
 import io.geekidea.springbootplus.system.param.sysuser.SysUserPageParam;
@@ -105,12 +106,13 @@ public class SysUserController extends BaseController {
     /**
      * 根据id获取系统用户
      */
-    @GetMapping("/info/{id}")
+    @GetMapping("/info")
 //    @RequiresPermissions("sys:user:info:id")
     @OperationLog(name = "系统用户详情", type = OperationLogType.INFO)
     @ApiOperation(value = "系统用户详情", notes = "", response = SysUserQueryVo.class)
-    public ApiResult<SysUserQueryVo> getSysUser(@PathVariable("id") Long id) throws Exception {
-        SysUserQueryVo sysUserQueryVo = sysUserService.getSysUserById(id);
+    public ApiResult<SysUserQueryVo> getSysUser() throws Exception {
+    	Long userId = CurrentUserUtil.getUserIfLogin().getId();
+        SysUserQueryVo sysUserQueryVo = sysUserService.getSysUserById(userId);
         return ApiResult.ok(sysUserQueryVo);
     }
 

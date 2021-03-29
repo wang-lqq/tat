@@ -1,8 +1,13 @@
 package com.example.work.controller;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,11 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
 import com.example.work.entity.WorkParts;
 import com.example.work.param.WorkPartsPageParam;
 import com.example.work.service.WorkPartsService;
 
+import io.geekidea.springbootplus.config.properties.SpringBootPlusProperties;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -42,6 +49,9 @@ public class WorkPartsController extends BaseController {
 
     @Autowired
     private WorkPartsService workPartsService;
+    
+    @Autowired
+    private SpringBootPlusProperties springBootPlusProperties;
 
     /**
      * 添加配件表
@@ -56,9 +66,34 @@ public class WorkPartsController extends BaseController {
     		String materialCode = "GA"+String.format("%05d", workParts.getId());
     		workParts.setMaterialCode(materialCode);
     		workParts.setUpdateTime(new Date());
+    		String specifications= HtmlUtils.htmlUnescape(workParts.getSpecifications());
+    		workParts.setSpecifications(specifications);
     		workPartsService.updateById(workParts);
     	}else {
+    		String specifications= HtmlUtils.htmlUnescape(workParts.getSpecifications());
+    		workParts.setSpecifications(specifications);
     		workParts.setUpdateTime(new Date());
+    		// 图片更新处理
+    		WorkParts wr = workPartsService.getById(workParts.getId());
+        	String oleEnclosure = wr.getPicture();
+        	String newEnclosure = workParts.getPicture();
+        	List<String> oleEnclosureList = new ArrayList<>();
+        	List<String> newEnclosureList = new ArrayList<>();
+        	if(!StringUtils.isEmpty(oleEnclosure)) {
+        		oleEnclosureList = new ArrayList<>(Arrays.asList(oleEnclosure.split(",")));
+        	}
+        	if(!StringUtils.isEmpty(newEnclosure)) {
+        		newEnclosureList = new ArrayList<>(Arrays.asList(newEnclosure.split(",")));
+        	}
+        	// 删除旧文件
+        	oleEnclosureList.removeAll(newEnclosureList);
+        	for (String str : oleEnclosureList) {
+        		String imgPath = springBootPlusProperties.getUploadPath()+str.substring(str.lastIndexOf("/")+1);
+        		File file = new File(imgPath);
+        		if(file.exists()) {
+        			file.delete();
+        		}
+			}
     		flag = workPartsService.updateById(workParts);
             return ApiResult.result(flag);
     	}
@@ -72,7 +107,9 @@ public class WorkPartsController extends BaseController {
     @OperationLog(name = "修改配件表", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改配件表", response = ApiResult.class)
     public ApiResult<Boolean> updateWorkParts(@Validated(Update.class) @RequestBody WorkParts workParts) throws Exception {
-        boolean flag = workPartsService.updateWorkParts(workParts);
+    	String specifications= HtmlUtils.htmlUnescape(workParts.getSpecifications());
+		workParts.setSpecifications(specifications);
+    	boolean flag = workPartsService.updateWorkParts(workParts);
         return ApiResult.result(flag);
     }
 

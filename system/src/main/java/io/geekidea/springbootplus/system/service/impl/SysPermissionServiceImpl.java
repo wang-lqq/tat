@@ -33,7 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -341,5 +340,41 @@ public class SysPermissionServiceImpl extends BaseServiceImpl<SysPermissionMappe
 		columnMap.put("level", 1);
 		List<SysPermission> sysPermissions = sysPermissionMapper.selectByMap(columnMap);
 		return sysPermissions;
+	}
+
+	@Override
+	public List<Map<String,Object>> getMenuTreeByUserIdv2(Long userId) throws Exception {
+		List<SysPermission> list = getMenuListByUserId(userId);
+		List<SysPermissionTreeVo> sysPermissionTreeVos = convertSysPermissionTreeVoList(list, false);
+		
+		List<Map<String,Object>> svos = new ArrayList<>();
+		
+		for (int j = 0; j < sysPermissionTreeVos.size(); j++) {
+			Map<String,Object> map = new HashMap<>();
+			map.put("title", sysPermissionTreeVos.get(j).getName());
+			map.put("name", sysPermissionTreeVos.get(j).getName());
+//			map.put("spread", false);
+			List<SysPermissionTreeVo> childrens = sysPermissionTreeVos.get(j).getChildren();
+			if(!CollectionUtils.isEmpty(childrens)) {
+				List<Map<String,Object>> listm = new ArrayList<>();
+				
+				for (int i = 0; i < childrens.size(); i++) {
+					Map<String,Object> m = new HashMap<>();
+//					if(i == 0 && j == 0) {
+//						m.put("jump", "/");
+//						m.put("title", childrens.get(i).getName());
+//					}else {
+						m.put("jump", childrens.get(i).getUrl());
+						m.put("title", childrens.get(i).getName());
+//						m.put("spread", false);
+						m.put("name", childrens.get(i).getName());
+//					}
+					listm.add(m);
+				}
+				map.put("list", listm);
+			}
+			svos.add(map);
+		}
+        return svos;
 	}
 }

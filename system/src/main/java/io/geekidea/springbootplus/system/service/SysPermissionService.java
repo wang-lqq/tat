@@ -18,10 +18,13 @@ package io.geekidea.springbootplus.system.service;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import io.geekidea.springbootplus.system.entity.SysPermission;
+import io.geekidea.springbootplus.system.entity.SysPermissionVo;
+import io.geekidea.springbootplus.system.entity.SysPermissionVos;
 import io.geekidea.springbootplus.system.param.SysPermissionPageParam;
 import io.geekidea.springbootplus.system.vo.SysPermissionQueryVo;
 import io.geekidea.springbootplus.system.vo.SysPermissionTreeVo;
@@ -170,4 +173,6 @@ public interface SysPermissionService extends BaseService<SysPermission> {
     List<SysPermissionTreeVo> getPermissionByRoleId(Long roleId) throws Exception;
 
 	List<SysPermission> OneLevel();
+
+	List<Map<String, Object>> getMenuTreeByUserIdv2(Long userId) throws Exception;
 }

@@ -11,10 +11,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -143,7 +144,11 @@ public class WorkRepairReportController extends BaseController {
         			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
         			data.put("repairCompletionTime", DateUtil.formatDate(wr.getRepairCompletionTime()));
             		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER_EXAMINE.getRoleCode());
-            		mailService.sendMail(to, EmailEnum.REPORT_ORDER_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER_EXAMINE.getTemplate(), data);
+            		try {
+						mailService.sendMail(to, EmailEnum.REPORT_ORDER_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER_EXAMINE.getTemplate(), data);
+					} catch (MessagingException e) {
+						e.printStackTrace();
+					}
         		}else if(wr.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {// 维修完成->维修完成
         			LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
         			wp.eq(WorkRepairReport::getWorkOrderNo, workRepairReport.getWorkOrderNo());
@@ -198,7 +203,7 @@ public class WorkRepairReportController extends BaseController {
     /**
      * 获取联络-维修单表详情
      */
-    @GetMapping("/info/{id}")
+    @PostMapping("/info/{id}")
     @OperationLog(name = "联络-维修单表详情", type = OperationLogType.INFO)
     @ApiOperation(value = "联络-维修单表详情", response = WorkRepairReport.class)
     public ApiResult<Map<String, Object>> getWorkRepairReport(@PathVariable("id") Long id) throws Exception {
@@ -222,13 +227,17 @@ public class WorkRepairReportController extends BaseController {
         	partList.add(countPartsMap);
         }
         Map<String, Object> data = object2Map(workRepairReport);
-        data.put("createTime", DateUtil.format(workRepairReport.getCreateTime(),"yyyy-MM-dd HH:mm"));
+        data.put("createTime", DateUtil.formatDate(workRepairReport.getCreateTime()));
         if(workRepairReport.getCompletionTime() != null) {
         	data.put("completionTime", DateUtil.formatDate(workRepairReport.getCompletionTime()));
         }
         if(workRepairReport.getRepairCompletionTime() != null) {
         	data.put("repairCompletionTime", DateUtil.formatDate(workRepairReport.getRepairCompletionTime()));
         }
+        if(workRepairReport.getRepairAuditTime() != null) {
+        	data.put("repairAuditTime", DateUtil.formatDate(workRepairReport.getRepairAuditTime()));
+        }
+        
         data.put("repairParts", partList);
         if(workRepairReport.getAgency() == null || workRepairReport.getAgency() == 0) {
         	data.put("agency", "社内");
@@ -275,7 +284,11 @@ public class WorkRepairReportController extends BaseController {
     		data.put("createTime", DateUtil.format(wr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 			data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
     		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER.getRoleCode());
-    		mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER.getTemplate(), data);
+    		try {
+				mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER.getTemplate(), data);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
     	}
     	if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode()) { // 维修部门长同意审核
     		// 算进度
@@ -287,11 +300,18 @@ public class WorkRepairReportController extends BaseController {
     		// 发送邮件->报修部门长
     		WorkRepairReport wrr = workRepairReportService.getById(workRepairReport.getId());
 			String email = sysUserService.getReportExamineEmail(wrr.getDepartmentId().longValue(), EmailEnum.REPORT_COMPLETE.getRoleCode());
+			if(StringUtils.isEmpty(email)) {
+				email = sysUserService.getReportExamineEmail(wrr.getDepartmentId().longValue(), EmailEnum.REPORT_ORDER.getRoleCode());
+			}
 			Map<String, Object> data = object2Map(wrr);
 			data.put("createTime", DateUtil.format(wrr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 			data.put("completionTime", DateUtil.formatDate(wrr.getCompletionTime()));
 			data.put("repairCompletionTime", DateUtil.formatDate(wrr.getRepairCompletionTime()));
-	    	mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
+	    	try {
+				mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
     	}
     	if(workRepairReport.getStatus() == StatusEnum.REFUSE.getCode()) {
     		workRepairReport.setRepairAuditUserId(vo.getId().intValue());

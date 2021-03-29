@@ -123,7 +123,7 @@ public class LoginServiceImpl implements LoginService {
         if (StateEnum.DISABLE.getCode().equals(sysUser.getState())) {
             throw new AuthenticationException("账号已禁用");
         }
-
+        username = sysUser.getUsername();
         // 实际项目中，前端传过来的密码应先加密
         // 原始密码明文：123456
         // 原始密码前端加密：sha256(123456)

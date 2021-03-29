@@ -158,7 +158,7 @@ public class WorkProductionEquipmentController<T> extends BaseController {
 			if(productionEquipment.getAssetCode().toLowerCase().indexOf(workProductionEquipment.getAssetCode().toLowerCase())!=-1) {
 				data.add(productionEquipment);
 			}
-			if(data.size() > 10) {
+			if(data.size() > 9) {
 				break;
 			}
 		}

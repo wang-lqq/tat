@@ -17,6 +17,7 @@
 package io.geekidea.springbootplus.system.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -33,6 +34,7 @@ import io.geekidea.springbootplus.framework.core.pagination.Paging;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
+import io.geekidea.springbootplus.framework.shiro.util.CurrentUserUtil;
 import io.geekidea.springbootplus.system.entity.SysPermission;
 import io.geekidea.springbootplus.system.param.SysPermissionPageParam;
 import io.geekidea.springbootplus.system.service.SysPermissionService;
@@ -185,6 +187,15 @@ public class SysPermissionController extends BaseController {
     public ApiResult<List<SysPermissionTreeVo>> getMenuTreeByUserId(@PathVariable("userId") Long userId) throws Exception {
         List<SysPermissionTreeVo> treeVos = sysPermissionService.getMenuTreeByUserId(userId);
         return ApiResult.ok(treeVos);
+    }
+    
+    @GetMapping("/getMenuTreeByUserIds")
+    @OperationLog(name = "根据用户id获取菜单树形列表", type = OperationLogType.OTHER_QUERY)
+    @ApiOperation(value = "根据用户id获取菜单树形列表", response = SysPermissionTreeVo.class)
+    public ApiResult<List<Map<String, Object>>> getMenuTreeByUserIdv2() throws Exception {
+    	Long userId = CurrentUserUtil.getUserIfLogin().getId();
+    	List<Map<String, Object>> treeVos = sysPermissionService.getMenuTreeByUserIdv2(userId);
+    	return ApiResult.ok(treeVos);
     }
 
     /**
