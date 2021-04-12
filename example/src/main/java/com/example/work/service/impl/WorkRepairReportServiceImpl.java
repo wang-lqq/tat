@@ -1,11 +1,10 @@
 package com.example.work.service.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.mail.MessagingException;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,7 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
 		data.put("completionTime", DateUtil.formatDate(wr.getCompletionTime()));
     	try {
 			mailService.sendMail(email, EmailEnum.REPORT_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_EXAMINE.getTemplate(), data);
-		} catch (MessagingException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
         return b;
@@ -108,9 +107,12 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		String workOrderNo = obj.getString("workOrderNo");
     		String machineNumber = obj.getString("machineNumber");
     		String model = obj.getString("model");
+    		String category = obj.getString("category");
+    		String date = obj.getString("date");
+    		String departmentIdStr = obj.getString("departmentId");
     		type = obj.getString("type");
     		if(!StringUtils.isEmpty(status)) {
-    			wrapper.ge(WorkRepairReport::getStatus, status);
+    			wrapper.eq(WorkRepairReport::getStatus, status);
     		}
     		if(!StringUtils.isEmpty(fullName)) {
     			wrapper.like(WorkRepairReport::getFullName, fullName);
@@ -136,6 +138,18 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     		if(!StringUtils.isEmpty(machineNumber)) {
     			wrapper.like(WorkRepairReport::getMachineNumber, machineNumber);
     		}
+    		if(!StringUtils.isEmpty(category)) {
+    			wrapper.eq(WorkRepairReport::getCategory, category);
+    		}
+    		if(!StringUtils.isEmpty(date)) {
+    			Date startDate = DateUtil.parse(date.substring(0, date.lastIndexOf("/")).trim(),"yyyy-MM");
+    			Date endDate = DateUtil.parse(date.substring(date.lastIndexOf("/")+1).trim(),"yyyy-MM");
+    			wrapper.ge(WorkRepairReport::getCreateTime, startDate);
+    			wrapper.le(WorkRepairReport::getCreateTime, endDate);
+        	}
+    		if(!StringUtils.isEmpty(departmentIdStr)) {
+    			wrapper.eq(WorkRepairReport::getDepartmentId, departmentIdStr);
+    		}
     	}
     	String roleCode = userVo.getRoleCode();
     	if(!roleCode.contains("admin") && !roleCode.contains("repair")) {
@@ -143,6 +157,9 @@ public class WorkRepairReportServiceImpl extends BaseServiceImpl<WorkRepairRepor
     	}
     	if(roleCode.contains("repair") && "1".equals(type)) {
     		wrapper.eq(WorkRepairReport::getDepartmentId, departmentId.intValue());
+    	}
+    	if("2".equals(type)) {
+    		wrapper.ge(WorkRepairReport::getStatus, 1);
     	}
     	Page<WorkRepairReport> page = new PageInfo<>(workRepairReportPageParam, OrderItem.desc(getLambdaColumn(WorkRepairReport::getCreateTime)));
         IPage<WorkRepairReport> iPage = workRepairReportMapper.selectPage(page, wrapper);

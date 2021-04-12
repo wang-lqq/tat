@@ -15,7 +15,7 @@ import java.io.Serializable;
  * 联络-维修单表 Mapper 接口
  *
  * @author wanglonglong
- * @since 2021-03-12
+ * @since 2021-04-02
  */
 @Repository
 public interface WorkRepairReportMapper extends BaseMapper<WorkRepairReport> {

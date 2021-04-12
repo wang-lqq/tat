@@ -3,7 +3,9 @@ package com.example.work.controller;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,15 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.example.sb.entity.SbPermission;
+import com.example.sb.service.SbPermissionService;
 import com.example.work.entity.WorkProductionEquipment;
 import com.example.work.param.WorkProductionEquipmentPageParam;
 import com.example.work.service.WorkProductionEquipmentService;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONUtil;
-import cn.hutool.poi.excel.ExcelReader;
-import cn.hutool.poi.excel.ExcelUtil;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -54,9 +55,10 @@ public class WorkProductionEquipmentController<T> extends BaseController {
 
     @Autowired
     private WorkProductionEquipmentService workProductionEquipmentService;
-    
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private SbPermissionService sbPermissionService;
 
     /**
      * 添加设备表
@@ -110,7 +112,7 @@ public class WorkProductionEquipmentController<T> extends BaseController {
     @ApiOperation(value = "设备表分页列表", response = WorkProductionEquipment.class)
     public ApiResult<Paging<WorkProductionEquipment>> getWorkProductionEquipmentPageList(@Validated @RequestBody WorkProductionEquipmentPageParam workProductionEquipmentPageParam) throws Exception {
     	Paging<WorkProductionEquipment> paging = workProductionEquipmentService.getWorkProductionEquipmentPageList(workProductionEquipmentPageParam);
-        return ApiResult.ok(paging);
+    	return ApiResult.ok(paging);
     }
     
     /**
@@ -172,18 +174,78 @@ public class WorkProductionEquipmentController<T> extends BaseController {
     @OperationLog(name = "数据导入", type = OperationLogType.excel_import)
     @ApiOperation(value = "数据导入", response = WorkProductionEquipment.class)
     public ApiResult<?> dataImport() throws Exception {
-		ExcelReader reader = ExcelUtil.getReader(FileUtil.file("C:\\Users\\ssx_it08112\\Desktop\\7346377.xlsx"));
-		List<List<Object>> read = reader.read(2, reader.getRowCount());
-		for (int i = 2; i < read.size(); i++) {
-			List<Object> objs = read.get(i);
-			WorkProductionEquipment pro = new WorkProductionEquipment();
-			pro.setCategory("A");
-			pro.setEquipmentName(objs.get(1)+"");
-			pro.setMachineNumber(objs.get(2)+"");
-			pro.setModel(objs.get(3)+"");
-			pro.setAssetCode(objs.get(4)+"");
-			pro.setUpdateTime(new Date());
-			workProductionEquipmentService.save(pro);
+//		ExcelReader reader = ExcelUtil.getReader(FileUtil.file("C:\\Users\\ssx_it08112\\Desktop\\7346377.xlsx"));
+//		List<List<Object>> read = reader.read(2, reader.getRowCount());
+//		for (int i = 2; i < read.size(); i++) {
+//			List<Object> objs = read.get(i);
+//			WorkProductionEquipment pro = new WorkProductionEquipment();
+//			pro.setCategory("A");
+//			pro.setEquipmentName(objs.get(1)+"");
+//			pro.setMachineNumber(objs.get(2)+"");
+//			pro.setModel(objs.get(3)+"");
+//			pro.setAssetCode(objs.get(4)+"");
+//			pro.setUpdateTime(new Date());
+//			workProductionEquipmentService.save(pro);
+//		}
+    	
+    	List<Map<String, String>> map =new ArrayList<>();
+    	
+    	Map<String, String> m1 =new HashMap<>();
+    	m1.put("k", "ssx-db01");
+    	m1.put("v", "");
+    	m1.put("leval", "0");
+    	
+    	Map<String, String> m2 =new HashMap<>();
+    	m2.put("k", "EINS制造");
+    	m2.put("v", "ssx-db01");
+    	m2.put("leval", "0");
+    	
+    	Map<String, String> m3 =new HashMap<>();
+    	m3.put("k", "加工系各文件夹");
+    	m3.put("v", "EINS制造");
+    	m3.put("leval", "1");
+    
+    	map.add(m1);
+    	map.add(m2);
+    	map.add(m3);
+    	
+    	for (Map<String, String> m : map) {
+    		String k = m.get("k");
+    		String v = m.get("v");
+    		String leval = m.get("leval");
+    		SbPermission sb = new SbPermission();
+    		
+    		LambdaQueryWrapper<SbPermission> wrapper = new LambdaQueryWrapper<>();
+    		wrapper.eq(SbPermission::getTitle, v);
+    		SbPermission  parentSb = sbPermissionService.getOne(wrapper);
+    		if(parentSb != null) {
+    			sb.setParentId(parentSb.getId().longValue());
+    		}else {
+    			sb.setParentId((long)0);
+    		}
+    		sb.setTitle(k);
+    		sb.setStatus(0);
+    		sb.setCreateTime(new Date());
+    		sb.setUpdateTime(new Date());
+    		sbPermissionService.save(sb);
+    		if(leval.equals("1")) {
+    			// 创建只读
+    			SbPermission son = new SbPermission();
+    			son.setTitle("只读");
+    			son.setStatus(0);
+    			son.setParentId(sb.getId().longValue());
+    			son.setCreateTime(new Date());
+    			son.setUpdateTime(new Date());
+        		sbPermissionService.save(son);
+        		// 创建读写
+    			SbPermission sonw = new SbPermission();
+    			sonw.setTitle("读写");
+    			sonw.setStatus(0);
+    			sonw.setParentId(sb.getId().longValue());
+    			sonw.setCreateTime(new Date());
+    			sonw.setUpdateTime(new Date());
+        		sbPermissionService.save(sonw);
+    		}
 		}
 		return ApiResult.ok();
     }

@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  * 联络-维修单表
  *
  * @author wanglonglong
- * @since 2021-03-12
+ * @since 2021-04-02
  */
 @Data
 @Accessors(chain = true)
@@ -130,5 +130,8 @@ public class WorkRepairReport extends BaseEntity {
 
     @ApiModelProperty("图片附件")
     private String enclosure;
+
+    @ApiModelProperty("报修提交人用户id")
+    private Integer submitterUserId;
 
 }

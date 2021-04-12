@@ -1,5 +1,6 @@
 package com.example.sb.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.sb.entity.SbComputer;
 import com.example.sb.param.SbComputerPageParam;
 import io.geekidea.springbootplus.framework.common.service.BaseService;
@@ -48,6 +49,6 @@ public interface SbComputerService extends BaseService<SbComputer> {
      * @return
      * @throws Exception
      */
-    Paging<SbComputer> getSbComputerPageList(SbComputerPageParam sbComputerPageParam) throws Exception;
+    Paging<JSONObject> getSbComputerPageList(SbComputerPageParam sbComputerPageParam) throws Exception;
 
 }

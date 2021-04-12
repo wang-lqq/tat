@@ -1,8 +1,8 @@
-package com.system.work.mapper;
+package com.example.sb.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.system.work.entity.SysUser;
-import com.system.work.param.SysUserPageParam;
+import com.example.sb.entity.SbComputersPermission;
+import com.example.sb.param.SbComputersPermissionPageParam;
 
 import org.springframework.stereotype.Repository;
 
@@ -12,13 +12,13 @@ import org.apache.ibatis.annotations.Param;
 import java.io.Serializable;
 
 /**
- * 系统用户 Mapper 接口
+ *  Mapper 接口
  *
  * @author wanglonglong
- * @since 2021-04-02
+ * @since 2021-04-08
  */
 @Repository
-public interface SysUserMapper extends BaseMapper<SysUser> {
+public interface SbComputersPermissionMapper extends BaseMapper<SbComputersPermission> {
 
 
 }

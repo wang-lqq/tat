@@ -1,9 +1,9 @@
-package com.example.sb.controller;
+package com.system.work.controller;
 
-import com.example.sb.entity.SbComputerRecord;
-import com.example.sb.service.SbComputerRecordService;
+import com.system.work.entity.SbComputers;
+import com.system.work.service.SbComputersService;
 import lombok.extern.slf4j.Slf4j;
-import com.example.sb.param.SbComputerRecordPageParam;
+import com.system.work.param.SbComputersPageParam;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.*;
  *  控制器
  *
  * @author wanglonglong
- * @since 2021-03-29
+ * @since 2021-04-07
  */
 @Slf4j
 @RestController
-@RequestMapping("/sbComputerRecord")
-@Module("sb")
+@RequestMapping("/sbComputers")
+@Module("work")
 @Api(value = "API", tags = {""})
-public class SbComputerRecordController extends BaseController {
+public class SbComputersController extends BaseController {
 
     @Autowired
-    private SbComputerRecordService sbComputerRecordService;
+    private SbComputersService sbComputersService;
 
     /**
      * 添加
@@ -41,8 +41,8 @@ public class SbComputerRecordController extends BaseController {
     @PostMapping("/add")
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
-    public ApiResult<Boolean> addSbComputerRecord(@Validated(Add.class) @RequestBody SbComputerRecord sbComputerRecord) throws Exception {
-        boolean flag = sbComputerRecordService.saveSbComputerRecord(sbComputerRecord);
+    public ApiResult<Boolean> addSbComputers(@Validated(Add.class) @RequestBody SbComputers sbComputers) throws Exception {
+        boolean flag = sbComputersService.saveSbComputers(sbComputers);
         return ApiResult.result(flag);
     }
 
@@ -52,8 +52,8 @@ public class SbComputerRecordController extends BaseController {
     @PostMapping("/update")
     @OperationLog(name = "修改", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改", response = ApiResult.class)
-    public ApiResult<Boolean> updateSbComputerRecord(@Validated(Update.class) @RequestBody SbComputerRecord sbComputerRecord) throws Exception {
-        boolean flag = sbComputerRecordService.updateSbComputerRecord(sbComputerRecord);
+    public ApiResult<Boolean> updateSbComputers(@Validated(Update.class) @RequestBody SbComputers sbComputers) throws Exception {
+        boolean flag = sbComputersService.updateSbComputers(sbComputers);
         return ApiResult.result(flag);
     }
 
@@ -63,8 +63,8 @@ public class SbComputerRecordController extends BaseController {
     @PostMapping("/delete/{id}")
     @OperationLog(name = "删除", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除", response = ApiResult.class)
-    public ApiResult<Boolean> deleteSbComputerRecord(@PathVariable("id") Long id) throws Exception {
-        boolean flag = sbComputerRecordService.deleteSbComputerRecord(id);
+    public ApiResult<Boolean> deleteSbComputers(@PathVariable("id") Long id) throws Exception {
+        boolean flag = sbComputersService.deleteSbComputers(id);
         return ApiResult.result(flag);
     }
 
@@ -73,10 +73,10 @@ public class SbComputerRecordController extends BaseController {
      */
     @GetMapping("/info/{id}")
     @OperationLog(name = "详情", type = OperationLogType.INFO)
-    @ApiOperation(value = "详情", response = SbComputerRecord.class)
-    public ApiResult<SbComputerRecord> getSbComputerRecord(@PathVariable("id") Long id) throws Exception {
-        SbComputerRecord sbComputerRecord = sbComputerRecordService.getById(id);
-        return ApiResult.ok(sbComputerRecord);
+    @ApiOperation(value = "详情", response = SbComputers.class)
+    public ApiResult<SbComputers> getSbComputers(@PathVariable("id") Long id) throws Exception {
+        SbComputers sbComputers = sbComputersService.getById(id);
+        return ApiResult.ok(sbComputers);
     }
 
     /**
@@ -84,9 +84,9 @@ public class SbComputerRecordController extends BaseController {
      */
     @PostMapping("/getPageList")
     @OperationLog(name = "分页列表", type = OperationLogType.PAGE)
-    @ApiOperation(value = "分页列表", response = SbComputerRecord.class)
-    public ApiResult<Paging<SbComputerRecord>> getSbComputerRecordPageList(@Validated @RequestBody SbComputerRecordPageParam sbComputerRecordPageParam) throws Exception {
-        Paging<SbComputerRecord> paging = sbComputerRecordService.getSbComputerRecordPageList(sbComputerRecordPageParam);
+    @ApiOperation(value = "分页列表", response = SbComputers.class)
+    public ApiResult<Paging<SbComputers>> getSbComputersPageList(@Validated @RequestBody SbComputersPageParam sbComputersPageParam) throws Exception {
+        Paging<SbComputers> paging = sbComputersService.getSbComputersPageList(sbComputersPageParam);
         return ApiResult.ok(paging);
     }
 

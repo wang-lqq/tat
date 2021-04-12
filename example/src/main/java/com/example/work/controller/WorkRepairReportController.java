@@ -5,13 +5,12 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -21,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -54,6 +54,7 @@ import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
 import io.geekidea.springbootplus.framework.shiro.util.CurrentUserUtil;
 import io.geekidea.springbootplus.framework.shiro.vo.LoginSysUserVo;
+import io.geekidea.springbootplus.system.entity.SysUser;
 import io.geekidea.springbootplus.system.service.SysUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -101,6 +102,9 @@ public class WorkRepairReportController extends BaseController {
     		workRepairReport.setWorkOrderNo(liushui);
     		workRepairReport.setDepartmentId(vo.getDepartmentId().intValue());
     		workRepairReport.setDepartmentName(vo.getDepartmentName());
+    		if(CurrentUserUtil.getUserIfLogin() != null && CurrentUserUtil.getUserIfLogin().getId() != null) {
+    			workRepairReport.setSubmitterUserId(CurrentUserUtil.getUserIfLogin().getId().intValue());
+    		}
     		flag = workRepairReportService.saveWorkRepairReport(workRepairReport);
     	}
         return ApiResult.result(flag);
@@ -113,6 +117,14 @@ public class WorkRepairReportController extends BaseController {
     @OperationLog(name = "修改联络-维修单表", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改联络-维修单表", response = ApiResult.class)
     public ApiResult<Boolean> updateWorkRepairReport(@Validated(Update.class) @RequestBody WorkRepairReport workRepairReport) throws Exception {
+    	if(!StringUtils.isEmpty(workRepairReport.getProblemVerification())) {
+    		String problemVerification= HtmlUtils.htmlUnescape(workRepairReport.getProblemVerification());
+    		workRepairReport.setProblemVerification(problemVerification);
+    	}
+    	if(!StringUtils.isEmpty(workRepairReport.getExplainImprove())) {
+    		String explainImprove= HtmlUtils.htmlUnescape(workRepairReport.getExplainImprove());
+    		workRepairReport.setExplainImprove(explainImprove);
+    	}
     	boolean flag = true;
     	WorkRepairReport wrr = new WorkRepairReport();
     	if(workRepairReport.getId() != null && workRepairReport.getId() != 0) {
@@ -146,7 +158,7 @@ public class WorkRepairReportController extends BaseController {
             		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER_EXAMINE.getRoleCode());
             		try {
 						mailService.sendMail(to, EmailEnum.REPORT_ORDER_EXAMINE.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER_EXAMINE.getTemplate(), data);
-					} catch (MessagingException e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
         		}else if(wr.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {// 维修完成->维修完成
@@ -237,7 +249,6 @@ public class WorkRepairReportController extends BaseController {
         if(workRepairReport.getRepairAuditTime() != null) {
         	data.put("repairAuditTime", DateUtil.formatDate(workRepairReport.getRepairAuditTime()));
         }
-        
         data.put("repairParts", partList);
         if(workRepairReport.getAgency() == null || workRepairReport.getAgency() == 0) {
         	data.put("agency", "社内");
@@ -247,6 +258,9 @@ public class WorkRepairReportController extends BaseController {
         }
         if(workRepairReport.getStatus() == StatusEnum.COMPLETE_AGREE.getCode() || workRepairReport.getStatus() == StatusEnum.REPAIR_COMPLETE.getCode()) {
         	data.put("status", "已完成");
+        }
+        if(workRepairReport.getStatus() == StatusEnum.UNDER_REPAIR.getCode()) {
+        	data.put("status", "维修中");
         }
         return ApiResult.ok(data);
     }
@@ -286,7 +300,7 @@ public class WorkRepairReportController extends BaseController {
     		String[] to = sysUserService.getRepairEmail(EmailEnum.REPORT_ORDER.getRoleCode());
     		try {
 				mailService.sendMail(to, EmailEnum.REPORT_ORDER.getSubject()+" "+wr.getWorkOrderNo(), EmailEnum.REPORT_ORDER.getTemplate(), data);
-			} catch (MessagingException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
     	}
@@ -299,17 +313,30 @@ public class WorkRepairReportController extends BaseController {
     		workRepairReport.setRepairExamineTime(new Date());
     		// 发送邮件->报修部门长
     		WorkRepairReport wrr = workRepairReportService.getById(workRepairReport.getId());
+    		SysUser sysUser = sysUserService.getById(wrr.getSubmitterUserId());
 			String email = sysUserService.getReportExamineEmail(wrr.getDepartmentId().longValue(), EmailEnum.REPORT_COMPLETE.getRoleCode());
-			if(StringUtils.isEmpty(email)) {
-				email = sysUserService.getReportExamineEmail(wrr.getDepartmentId().longValue(), EmailEnum.REPORT_ORDER.getRoleCode());
+			String submitterEmail = "";
+			if(wrr.getDepartmentName().equals("安全生产课") && StringUtils.isEmpty(email)) {
+				email = sysUser.getEmail();
+			}else {
+				if(sysUser != null) {
+					submitterEmail = sysUser.getEmail();
+				}
 			}
+			
 			Map<String, Object> data = object2Map(wrr);
 			data.put("createTime", DateUtil.format(wrr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 			data.put("completionTime", DateUtil.formatDate(wrr.getCompletionTime()));
 			data.put("repairCompletionTime", DateUtil.formatDate(wrr.getRepairCompletionTime()));
 	    	try {
-				mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
-			} catch (MessagingException e) {
+	    		// 报修审核人
+	    		if(!StringUtils.isEmpty(email)) {
+	    			mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
+	    		}
+				if(!StringUtils.isEmpty(submitterEmail)) {
+					mailService.sendMail(submitterEmail, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
     	}
@@ -383,9 +410,47 @@ public class WorkRepairReportController extends BaseController {
         Set<Entry<String,Object>> entrySet = jsonObject.entrySet();
         Map<String, Object> map=new LinkedHashMap<String,Object>();
         for (Entry<String, Object> entry : entrySet) {
-            map.put(entry.getKey(), entry.getValue());
+        	if(entry.getValue() == null) {
+        		map.put(entry.getKey(), "");
+        	}else {
+        		map.put(entry.getKey(), entry.getValue());
+        	}
         }
         return map;
+    }
+    
+    
+    @PostMapping("/sendEmail")
+    @OperationLog(name = "批量发送邮件", type = OperationLogType.OTHER)
+    @ApiOperation(value = "批量发送邮件")
+    public ApiResult<Boolean> sendEmail() throws Exception {
+    	LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
+    	wrapper.like(SysUser::getUsername, "SSX%");
+    	List<SysUser> list = sysUserService.list(wrapper);
+    	System.out.println(list.size());
+    	for (SysUser sysUser : list) {
+    		
+    		if(!StringUtils.isEmpty(sysUser.getEmail())) {
+    			// 发送邮箱
+    			try {
+    				Map<String, Object> data = new HashMap<>();
+    				data.put("nickname", sysUser.getNickname());
+    				data.put("username", sysUser.getUsername());
+    				data.put("originalPassword", sysUser.getOriginalPassword());
+    				
+    				String email = sysUser.getEmail();
+    				if(StringUtils.isEmpty(email)) {
+    					throw new Exception();
+    				}
+    				mailService.sendMail(email, "关于SSX web报修系统使用账号密码的联络", "sendEmail", data);
+				} catch (Exception e) {
+					System.out.println("发送邮箱错误请重试：{"+sysUser.getEmail()+"}");
+				}
+    		}
+    		
+		}
+    	boolean b = false;
+    	return ApiResult.ok(b);
     }
 }
 

@@ -1,9 +1,9 @@
 package com.example.sb.controller;
 
-import com.example.sb.entity.SbComputer;
-import com.example.sb.service.SbComputerService;
+import com.example.sb.entity.SbComputersPermission;
+import com.example.sb.service.SbComputersPermissionService;
 import lombok.extern.slf4j.Slf4j;
-import com.example.sb.param.SbComputerPageParam;
+import com.example.sb.param.SbComputersPermissionPageParam;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.*;
  *  控制器
  *
  * @author wanglonglong
- * @since 2021-03-29
+ * @since 2021-04-08
  */
 @Slf4j
 @RestController
-@RequestMapping("/sbComputer")
+@RequestMapping("/sbComputersPermission")
 @Module("sb")
 @Api(value = "API", tags = {""})
-public class SbComputerController extends BaseController {
+public class SbComputersPermissionController extends BaseController {
 
     @Autowired
-    private SbComputerService sbComputerService;
+    private SbComputersPermissionService sbComputersPermissionService;
 
     /**
      * 添加
@@ -41,8 +41,8 @@ public class SbComputerController extends BaseController {
     @PostMapping("/add")
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
-    public ApiResult<Boolean> addSbComputer(@Validated(Add.class) @RequestBody SbComputer sbComputer) throws Exception {
-        boolean flag = sbComputerService.saveSbComputer(sbComputer);
+    public ApiResult<Boolean> addSbComputersPermission(@Validated(Add.class) @RequestBody SbComputersPermission sbComputersPermission) throws Exception {
+        boolean flag = sbComputersPermissionService.saveSbComputersPermission(sbComputersPermission);
         return ApiResult.result(flag);
     }
 
@@ -52,8 +52,8 @@ public class SbComputerController extends BaseController {
     @PostMapping("/update")
     @OperationLog(name = "修改", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改", response = ApiResult.class)
-    public ApiResult<Boolean> updateSbComputer(@Validated(Update.class) @RequestBody SbComputer sbComputer) throws Exception {
-        boolean flag = sbComputerService.updateSbComputer(sbComputer);
+    public ApiResult<Boolean> updateSbComputersPermission(@Validated(Update.class) @RequestBody SbComputersPermission sbComputersPermission) throws Exception {
+        boolean flag = sbComputersPermissionService.updateSbComputersPermission(sbComputersPermission);
         return ApiResult.result(flag);
     }
 
@@ -63,8 +63,8 @@ public class SbComputerController extends BaseController {
     @PostMapping("/delete/{id}")
     @OperationLog(name = "删除", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除", response = ApiResult.class)
-    public ApiResult<Boolean> deleteSbComputer(@PathVariable("id") Long id) throws Exception {
-        boolean flag = sbComputerService.deleteSbComputer(id);
+    public ApiResult<Boolean> deleteSbComputersPermission(@PathVariable("id") Long id) throws Exception {
+        boolean flag = sbComputersPermissionService.deleteSbComputersPermission(id);
         return ApiResult.result(flag);
     }
 
@@ -73,10 +73,10 @@ public class SbComputerController extends BaseController {
      */
     @GetMapping("/info/{id}")
     @OperationLog(name = "详情", type = OperationLogType.INFO)
-    @ApiOperation(value = "详情", response = SbComputer.class)
-    public ApiResult<SbComputer> getSbComputer(@PathVariable("id") Long id) throws Exception {
-        SbComputer sbComputer = sbComputerService.getById(id);
-        return ApiResult.ok(sbComputer);
+    @ApiOperation(value = "详情", response = SbComputersPermission.class)
+    public ApiResult<SbComputersPermission> getSbComputersPermission(@PathVariable("id") Long id) throws Exception {
+        SbComputersPermission sbComputersPermission = sbComputersPermissionService.getById(id);
+        return ApiResult.ok(sbComputersPermission);
     }
 
     /**
@@ -84,9 +84,9 @@ public class SbComputerController extends BaseController {
      */
     @PostMapping("/getPageList")
     @OperationLog(name = "分页列表", type = OperationLogType.PAGE)
-    @ApiOperation(value = "分页列表", response = SbComputer.class)
-    public ApiResult<Paging<SbComputer>> getSbComputerPageList(@Validated @RequestBody SbComputerPageParam sbComputerPageParam) throws Exception {
-        Paging<SbComputer> paging = sbComputerService.getSbComputerPageList(sbComputerPageParam);
+    @ApiOperation(value = "分页列表", response = SbComputersPermission.class)
+    public ApiResult<Paging<SbComputersPermission>> getSbComputersPermissionPageList(@Validated @RequestBody SbComputersPermissionPageParam sbComputersPermissionPageParam) throws Exception {
+        Paging<SbComputersPermission> paging = sbComputersPermissionService.getSbComputersPermissionPageList(sbComputersPermissionPageParam);
         return ApiResult.ok(paging);
     }
 

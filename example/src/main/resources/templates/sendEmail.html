@@ -1,0 +1,14 @@
+<body>
+<p>尊敬的<span th:text="${data.nickname}"></span></p>
+<p>下午好！</p>
+<p>昨天已为大家培训了SSX web报修系统内容，今后纸质单据不再使用，大家可以直接使用</p>
+<p>报修系统进行设备资产的报修，现发送登陆地址以及账号密码，望妥善保管。</p>
+<p>地址：<a href="http://172.19.1.36:81/ssx-admin">http://172.19.1.36:81/ssx-admin</a></p>
+<p>用户：<span th:text="${data.username}"></span></p>
+<p>密码：<span th:text="${data.originalPassword}"></span></p>
+<p>以下为使用说明附件：<a href="http://172.19.1.36:8888/api/resource/SSX报修系统使用说明.pdf">
+http://172.19.1.36:8888/api/resource/SSX报修系统使用说明.pdf</a></p>
+<p>如有疑问，请联系IT课</p>
+<p>以上谢谢</p>
+<p>&nbsp;</p>
+</body>

@@ -82,4 +82,6 @@ public class SysUser extends BaseEntity {
     @ApiModelProperty("电子邮件地址")
     private String email;
 
+    @ApiModelProperty("原密码")
+    private String originalPassword;
 }

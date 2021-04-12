@@ -9,7 +9,7 @@ import io.geekidea.springbootplus.framework.core.pagination.Paging;
  * 系统用户 服务类
  *
  * @author wanglonglong
- * @since 2021-02-24
+ * @since 2021-04-02
  */
 public interface SysUserService extends BaseService<SysUser> {
 

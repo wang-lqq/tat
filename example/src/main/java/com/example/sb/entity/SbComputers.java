@@ -18,20 +18,30 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 
  *
  * @author wanglonglong
- * @since 2021-03-29
+ * @since 2021-04-01
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "SbComputerRecord对象")
-public class SbComputerRecord extends BaseEntity {
+@ApiModel(value = "SbComputers对象")
+public class SbComputers extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
-    private Integer id;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Long id;
 
     @ApiModelProperty("mac地址")
     private String mac;
+
+    @ApiModelProperty("主机型号")
+    private String hostModel;
+
+    @ApiModelProperty("OA管理编码")
+    private String oaManagementCode;
+
+    @ApiModelProperty("始用日期")
+    private Date startDate;
 
     @ApiModelProperty("部门id")
     private Integer departmentId;
@@ -87,8 +97,7 @@ public class SbComputerRecord extends BaseEntity {
     @ApiModelProperty("SW (●盗版 )(√ 正版,网络版)")
     private String sw;
 
-    @ApiModelProperty("SW_PDM
-")
+    @ApiModelProperty("SW_PDM")
     private String swPdm;
 
     @ApiModelProperty("Autocad(●盗版 )中望2015 网络版 (√ 正版)")
@@ -174,5 +183,9 @@ public class SbComputerRecord extends BaseEntity {
 
     @ApiModelProperty("修改时间")
     private Date updateTime;
-
+    
+    @ApiModelProperty("状态：0，默认；-1，报废；1，已流转")
+    private Integer status;
+    @ApiModelProperty("流转时间")
+    private Date circulationTime;
 }

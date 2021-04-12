@@ -19,7 +19,7 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 系统用户
  *
  * @author wanglonglong
- * @since 2021-02-24
+ * @since 2021-04-02
  */
 @Data
 @Accessors(chain = true)
@@ -81,5 +81,7 @@ public class SysUser extends BaseEntity {
 
     @ApiModelProperty("电子邮件地址")
     private String email;
+
+    private String originalPassword;
 
 }
