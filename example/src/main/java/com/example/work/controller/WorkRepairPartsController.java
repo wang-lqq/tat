@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -92,8 +93,14 @@ public class WorkRepairPartsController extends BaseController {
         	double money = unitPrice.multiply(number).doubleValue();
         	workRepairParts.setMoney(money);
         }
-        String specifications= HtmlUtils.htmlUnescape(workRepairParts.getSpecifications());
-    	workRepairParts.setSpecifications(specifications);
+        if(!StringUtils.isEmpty(workRepairParts.getSpecifications())) {
+        	String specifications = workRepairParts.getSpecifications();
+        	if(specifications.contains("&amp;")) {
+        		specifications = specifications.replace("&amp;", "&");
+        	}
+        	specifications = HtmlUtils.htmlUnescape(specifications);
+        	workRepairParts.setSpecifications(specifications);
+        }
         boolean	flag = workRepairPartsService.updateWorkRepairParts(workRepairParts);
         return ApiResult.result(flag);
     }

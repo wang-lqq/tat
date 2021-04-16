@@ -1,9 +1,11 @@
 package com.example.sb.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
@@ -22,11 +24,16 @@ import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sb.entity.SbComputers;
 import com.example.sb.entity.SbComputersPermission;
+import com.example.sb.entity.SbComputersSoftware;
+import com.example.sb.entity.SbSoftware;
 import com.example.sb.mapper.SbComputersMapper;
+import com.example.sb.mapper.SbComputersSoftwareMapper;
+import com.example.sb.mapper.SbSoftwareMapper;
 import com.example.sb.param.SbComputersPageParam;
 import com.example.sb.service.SbComputersPermissionService;
 import com.example.sb.service.SbComputersService;
 
+import cn.hutool.core.date.DateUtil;
 import io.geekidea.springbootplus.framework.common.exception.DaoException;
 import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
 import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
@@ -47,6 +54,11 @@ public class SbComputersServiceImpl extends BaseServiceImpl<SbComputersMapper, S
     private SbComputersMapper sbComputersMapper;
     @Autowired
     private SbComputersPermissionService sbComputersPermissionService;
+    @Autowired
+    private SbSoftwareMapper sbSoftwareMapper;
+    @Autowired
+    private SbComputersSoftwareMapper sbComputersSoftwareMapper;
+
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -138,4 +150,70 @@ public class SbComputersServiceImpl extends BaseServiceImpl<SbComputersMapper, S
         }
         return true;
     }
+
+	@Override
+	public void setComputersSoftware(JSONObject jsonObject, Long computersId) {
+		LambdaQueryWrapper<SbSoftware> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SbSoftware::getStatus, 1);
+		List<SbSoftware> list = sbSoftwareMapper.selectList(wrapper);
+		
+		for (SbSoftware sbSoftware : list) {
+			String value = jsonObject.getString(sbSoftware.getSoftwareEn());
+			if(!StringUtils.isEmpty(value)) {
+				SbComputersSoftware sbComputersSoftware = new SbComputersSoftware();
+				sbComputersSoftware.setComputersId(computersId.intValue());
+				sbComputersSoftware.setSoftwareId(sbSoftware.getId());
+				sbComputersSoftware.setSoftwareValue(value);
+				sbComputersSoftware.setCreateTime(new Date());
+				sbComputersSoftware.setUpdateTime(new Date());
+				sbComputersSoftwareMapper.insert(sbComputersSoftware);
+			}
+		}
+	}
+
+	@Override
+	public void updateSoftware(JSONObject jsonObject, Long computersId) {
+		LambdaQueryWrapper<SbSoftware> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SbSoftware::getStatus, 1);
+		List<SbSoftware> list = sbSoftwareMapper.selectList(wrapper);
+		
+		LambdaQueryWrapper<SbComputersSoftware> wr = new LambdaQueryWrapper<>();
+		wr.eq(SbComputersSoftware::getComputersId, computersId);
+		List<SbComputersSoftware> computersSoftwares = sbComputersSoftwareMapper.selectList(wr);
+		
+		List<SbComputersSoftware> updateList = new ArrayList<>();
+		for (SbSoftware sbSoftware : list) {
+			String value = jsonObject.getString(sbSoftware.getSoftwareEn());
+//			if(!StringUtils.isEmpty(value)) {
+				SbComputersSoftware sbComputersSoftware = new SbComputersSoftware();
+				sbComputersSoftware.setComputersId(computersId.intValue());
+				sbComputersSoftware.setSoftwareId(sbSoftware.getId());
+				sbComputersSoftware.setSoftwareValue(value);
+				sbComputersSoftware.setCreateTime(new Date());
+				sbComputersSoftware.setUpdateTime(new Date());
+				updateList.add(sbComputersSoftware);
+//			}
+		}
+		
+		for (SbComputersSoftware sbComputersSoftware : computersSoftwares) {
+			for (SbComputersSoftware up : updateList) {
+				if(sbComputersSoftware.getSoftwareId() == up.getSoftwareId()) {
+					if(!sbComputersSoftware.getSoftwareValue().equals(up.getSoftwareValue())) {
+						sbComputersSoftware.setSoftwareValue(up.getSoftwareValue());
+						sbComputersSoftwareMapper.updateById(sbComputersSoftware);
+					}
+				}
+			}
+		}
+		
+		List<SbComputersSoftware> saveList = updateList.stream()
+		        .filter(item -> !computersSoftwares.stream()
+		        .map(e -> e.getSoftwareId())
+		        .collect(Collectors.toList())
+		        .contains(item.getSoftwareId()))
+		        .collect(Collectors.toList());
+		for (SbComputersSoftware sbComputersSoftware : saveList) {
+			sbComputersSoftwareMapper.insert(sbComputersSoftware);
+		}
+	}
 }

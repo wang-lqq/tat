@@ -18,25 +18,33 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 
  *
  * @author wanglonglong
- * @since 2021-04-08
+ * @since 2021-04-12
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "SbComputersPermission对象")
-public class SbComputersPermission extends BaseEntity {
+@ApiModel(value = "SbSoftware对象")
+public class SbSoftware extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
+    @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("电脑台账id")
-    private Integer computersId;
+    @ApiModelProperty("软件名称")
+    private String softwareName;
+    
 
-    @ApiModelProperty("文件夹权限id")
-    private Integer permissionId;
+    @ApiModelProperty("软件属性名")
+    private String softwareEn;
+    
+    @ApiModelProperty("输入类型")
+    private String type;
 
-    @ApiModelProperty("状态")
+    @ApiModelProperty("排序")
+    private Integer sort;
+    
+    @ApiModelProperty("状态：0，启用；1，禁用")
     private Integer status;
 
     @ApiModelProperty("创建时间")

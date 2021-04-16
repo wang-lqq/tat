@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.HtmlUtils;
 
 import com.example.sb.entity.SbPermission;
 import com.example.sb.param.SbPermissionPageParam;
@@ -52,8 +53,10 @@ public class SbPermissionController extends BaseController {
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
     public ApiResult<List<SbPermissionTreeVo>> addSbPermission(@Validated(Add.class) @RequestBody SbPermission sbPermission) throws Exception {
-        sbPermissionService.saveSbPermission(sbPermission);
-        List<SbPermissionTreeVo> trees = sbPermissionService.openTree();
+    	String title= HtmlUtils.htmlUnescape(sbPermission.getTitle());
+    	sbPermission.setTitle(title);
+    	sbPermissionService.saveSbPermission(sbPermission);
+        List<SbPermissionTreeVo> trees = sbPermissionService.openTree(sbPermission.getId());
         return ApiResult.ok(trees);
     }
 
@@ -64,6 +67,8 @@ public class SbPermissionController extends BaseController {
     @OperationLog(name = "修改", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改", response = ApiResult.class)
     public ApiResult<Boolean> updateSbPermission(@Validated(Update.class) @RequestBody SbPermission sbPermission) throws Exception {
+    	String title= HtmlUtils.htmlUnescape(sbPermission.getTitle());
+    	sbPermission.setTitle(title);
     	sbPermission.setUpdateTime(new Date());
     	boolean flag = sbPermissionService.updateSbPermission(sbPermission);
         return ApiResult.result(flag);
@@ -115,7 +120,18 @@ public class SbPermissionController extends BaseController {
     @OperationLog(name = "展开树形", type = OperationLogType.OTHER_QUERY)
     @ApiOperation(value = "展开树形", response = SbPermissionTreeVo.class)
     public ApiResult<List<SbPermissionTreeVo>> openTree() throws Exception {
-        List<SbPermissionTreeVo> tree = sbPermissionService.openTree();
+        List<SbPermissionTreeVo> tree = sbPermissionService.openTree(0);
+        return ApiResult.ok(tree);
+    }
+    
+    /**
+     * 根据id查询树
+     */
+    @GetMapping("/tree/{id}")
+    @OperationLog(name = "树形详情", type = OperationLogType.OTHER_QUERY)
+    @ApiOperation(value = "树形详情", response = SbPermissionTreeVo.class)
+    public ApiResult<List<SbPermissionTreeVo>> treeById(@PathVariable("id") Integer id) throws Exception {
+    	List<SbPermissionTreeVo> tree = sbPermissionService.treeById(id);
         return ApiResult.ok(tree);
     }
 }

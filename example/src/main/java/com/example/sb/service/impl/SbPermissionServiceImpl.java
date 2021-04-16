@@ -1,7 +1,6 @@
 package com.example.sb.service.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.text.StringEscapeUtils;
@@ -86,37 +85,90 @@ public class SbPermissionServiceImpl extends BaseServiceImpl<SbPermissionMapper,
 			BeanUtil.copyProperties(sbPermission, vo);
 			trees.add(vo);
 		}
-		trees = list2Tree(trees, 0);
+		trees = listToTree2(trees);
 		return trees;
 	}
     
-    public List<SbPermissionTreeVo> list2Tree(List<SbPermissionTreeVo> list, Integer pId) {
-        List<SbPermissionTreeVo> tree = new ArrayList<>();
-        Iterator<SbPermissionTreeVo> it = list.iterator();
-        while (it.hasNext()) {
-        	SbPermissionTreeVo m = it.next();
-            if (m.getParentId() == pId) {
-                tree.add(m);
-                // 已添加的元素删除掉
-                it.remove();
-            }
-        }
-        // 寻找子元素
-        tree.forEach(n -> n.children = list2Tree(list, n.getId()));
-        return tree;
-    }
-
 	@Override
-	public List<SbPermissionTreeVo> openTree() {
+	public List<SbPermissionTreeVo> openTree(Integer id) {
+		if(id != null && id != 0) {
+			return treeById(id);
+		}
 		List<SbPermission> sbPermissions = list();
 		List<SbPermissionTreeVo> trees = new ArrayList<>();
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();
 			BeanUtil.copyProperties(sbPermission, vo);
-			vo.setSpread(true);
+			if(sbPermission.getParentId() == 0) {
+				vo.setSpread(true);
+			}
 			trees.add(vo);
 		}
-		trees = list2Tree(trees, 0);
+		trees = listToTree2(trees);
+		return trees;
+	}
+	
+	public List<SbPermissionTreeVo> listToTree2(List<SbPermissionTreeVo> list) {
+	    List<SbPermissionTreeVo> tree = new ArrayList<>();
+	    for (SbPermissionTreeVo user : list) {
+	        //找到根节点
+	        if (user.getParentId() == null || user.getParentId().equals(0)) { // db01 db02
+	            tree.add(findChildren(user, list));
+	        }
+	    }
+	    return tree;
+	}
+	
+	/**
+	 * 查找子节点
+	 * @param user
+	 * @param list
+	 * @return
+	 */
+	private SbPermissionTreeVo findChildren(SbPermissionTreeVo user, List<SbPermissionTreeVo> list) {
+	    List<SbPermissionTreeVo> children = new ArrayList<>();
+	    for (SbPermissionTreeVo node : list) {
+	        if (node.getParentId().equals(user.getId())) {
+	            //递归调用
+	            children.add(findChildren(node, list));
+	        }
+	    }
+	    if(CollectionUtil.isNotEmpty(children)) {
+	    	user.setChecked(false);
+	    }
+	    user.setChildren(children);
+	    return user;
+	}
+
+	@Override
+	public List<SbPermissionTreeVo> treeById(Integer id) {
+		SbPermission sb = sbPermissionMapper.selectById(id);
+		SbPermission parentSb = new SbPermission();
+		SbPermission parentSbs = new SbPermission();
+		if(sb.getParentId() != null && sb.getParentId() != 0) {
+			parentSb = sbPermissionMapper.selectById(sb.getParentId());
+		}
+		if(parentSb.getParentId() != null && parentSb.getParentId() != 0) {
+			parentSbs = sbPermissionMapper.selectById(parentSb.getParentId());
+		}
+		
+		List<SbPermission> sbPermissions = list();
+		List<SbPermissionTreeVo> trees = new ArrayList<>();
+		for (SbPermission sbPermission : sbPermissions) {
+			SbPermissionTreeVo vo = new SbPermissionTreeVo();
+			BeanUtil.copyProperties(sbPermission, vo);
+			if(sb.getParentId() != null && vo.getId() == sb.getParentId().intValue()) {
+				vo.setSpread(true);
+			}
+			if(parentSb.getParentId() != null && vo.getId() == parentSb.getParentId().intValue()) {
+				vo.setSpread(true);
+			}
+			if(parentSbs.getParentId() != null && vo.getId() == parentSbs.getParentId().intValue()) {
+				vo.setSpread(true);
+			}
+			trees.add(vo);
+		}
+		trees = listToTree2(trees);
 		return trees;
 	}
 }

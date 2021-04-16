@@ -99,29 +99,29 @@ public class SbComputersPermissionServiceImpl extends BaseServiceImpl<SbComputer
 			BeanUtil.copyProperties(sbPermission, vo);
 			trees.add(vo);
 			for (SbComputersPermission sbComputersPermission : computersPermissions) {
-				if(sbComputersPermission.getPermissionId() == sbPermission.getId()) {
+				if(sbComputersPermission.getPermissionId().equals(sbPermission.getId())) {
 					vo.setSpread(true);
 					vo.setChecked(true);
 				}
 			}
 		}
-		List<SbPermissionTreeVo> treeList = sbPermissionService.list2Tree(trees, 0);
-		for (SbPermissionTreeVo sbPermissionTreeVo : treeList) {
-			List<SbPermissionTreeVo> oneChildren = sbPermissionTreeVo.getChildren();
-			if(CollectionUtil.isNotEmpty(oneChildren)) {
-				sbPermissionTreeVo.setChecked(false);
-				for (SbPermissionTreeVo oneChr : oneChildren) {
-					if(CollectionUtil.isNotEmpty(oneChr.getChildren())) {
-						oneChr.setChecked(false);
-						for (SbPermissionTreeVo twoChr : oneChr.getChildren()) {
-							if(CollectionUtil.isNotEmpty(twoChr.getChildren())) {
-								twoChr.setChecked(false);
-							}
-						}
-					}
-				}
-			}
-		}
+		List<SbPermissionTreeVo> treeList = sbPermissionService.listToTree2(trees);
+//		for (SbPermissionTreeVo sbPermissionTreeVo : treeList) {
+//			List<SbPermissionTreeVo> oneChildren = sbPermissionTreeVo.getChildren();
+//			if(CollectionUtil.isNotEmpty(oneChildren)) {
+//				sbPermissionTreeVo.setChecked(false);
+//				for (SbPermissionTreeVo oneChr : oneChildren) {
+//					if(CollectionUtil.isNotEmpty(oneChr.getChildren())) {
+//						oneChr.setChecked(false);
+//						for (SbPermissionTreeVo twoChr : oneChr.getChildren()) {
+//							if(CollectionUtil.isNotEmpty(twoChr.getChildren())) {
+//								twoChr.setChecked(false);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 		return treeList;
 	}
 
@@ -130,10 +130,12 @@ public class SbComputersPermissionServiceImpl extends BaseServiceImpl<SbComputer
 		LambdaQueryWrapper<SbComputersPermission> wrapper = new LambdaQueryWrapper<>();
 		wrapper.eq(SbComputersPermission::getComputersId, computersId);
 		List<SbComputersPermission> computersPermissions = sbComputersPermissionMapper.selectList(wrapper);
+		if(CollectionUtil.isEmpty(computersPermissions)) {
+			return new ArrayList<SbPermissionTreeVo>();
+		}
 		List<Integer> list = new ArrayList<>();
 		for (SbComputersPermission sbComputersPermission : computersPermissions) {
 			list.add(sbComputersPermission.getPermissionId());
-			
 		}
 		
 		LambdaQueryWrapper<SbPermission> sbWrapper = new LambdaQueryWrapper<>();
@@ -146,14 +148,14 @@ public class SbComputersPermissionServiceImpl extends BaseServiceImpl<SbComputer
 			BeanUtil.copyProperties(sbPermission, vo);
 			trees.add(vo);
 			for (SbComputersPermission sbComputersPermission : computersPermissions) {
-				if(sbComputersPermission.getPermissionId() == sbPermission.getId()) {
+				System.out.println(sbComputersPermission.getPermissionId() +"-"+ sbPermission.getId());
+				if(sbComputersPermission.getPermissionId().equals(sbPermission.getId())) {
 					vo.setSpread(true);
 					vo.setChecked(true);
-//					vo.setDisabled(true);
 				}
 			}
 		}
-		List<SbPermissionTreeVo> treeList = sbPermissionService.list2Tree(trees, 0);
+		List<SbPermissionTreeVo> treeList = sbPermissionService.listToTree2(trees);
 		return treeList;
 	}
 }

@@ -56,7 +56,11 @@ public interface SbPermissionService extends BaseService<SbPermission> {
 
 	List<SbPermissionTreeVo> tree();
 	
-	List<SbPermissionTreeVo> list2Tree(List<SbPermissionTreeVo> list, Integer parentId);
+//	List<SbPermissionTreeVo> list2Tree(List<SbPermissionTreeVo> list, Integer parentId);
+	
+	List<SbPermissionTreeVo> listToTree2(List<SbPermissionTreeVo> list);
 
-	List<SbPermissionTreeVo> openTree();
+	List<SbPermissionTreeVo> openTree(Integer id);
+
+	List<SbPermissionTreeVo> treeById(Integer id);
 }

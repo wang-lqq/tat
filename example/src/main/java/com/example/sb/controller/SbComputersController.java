@@ -73,6 +73,8 @@ public class SbComputersController extends BaseController {
     		sbComputers.setDepartmentName(departmentName);
     	}
     	boolean flag = sbComputersService.saveSbComputers(sbComputers);
+    	// 创建软件中间表信息
+    	sbComputersService.setComputersSoftware(obj, sbComputers.getId());
     	// 创建文件夹权限
     	sbComputersService.updateSbComputersPermission(permissionIds, sbComputers.getId().intValue());
         return ApiResult.result(flag);
@@ -84,10 +86,14 @@ public class SbComputersController extends BaseController {
     @PostMapping("/circulation")
     @OperationLog(name = "流转", type = OperationLogType.ADD)
     @ApiOperation(value = "流转", response = ApiResult.class)
-    public ApiResult<Boolean> circulation(@Validated(Add.class) @RequestBody SbComputers sbComputers) throws Exception {
-    	String str = JSONObject.toJSONString(sbComputers);
-    	JSONObject jsonObject = JSONObject.parseObject(HtmlUtils.htmlUnescape(str));
-    	sbComputers = JSON.toJavaObject(jsonObject, SbComputers.class);
+    public ApiResult<Boolean> circulation(@Validated(Add.class) @RequestBody JSONObject jsonObject) throws Exception {
+    	String permissionStr = jsonObject.getString("permissionIds");
+    	List<Integer> permissionIds = JSONArray.parseArray(permissionStr, Integer.class);
+    	jsonObject.remove("permissionIds");
+    	
+    	String htmlStr = HtmlUtils.htmlUnescape(JSONObject.toJSONString(jsonObject));
+    	JSONObject obj = JSONObject.parseObject(htmlStr);
+    	SbComputers sbComputers = JSON.toJavaObject(obj, SbComputers.class);
     	
     	LambdaQueryWrapper<SbComputers> wrapper = new LambdaQueryWrapper<>();
     	wrapper.eq(SbComputers::getMac, sbComputers.getMac());
@@ -104,10 +110,15 @@ public class SbComputersController extends BaseController {
     		oldComputers.setCirculationTime(new Date());
     		sbComputersService.updateById(oldComputers);
     	}
-    	
-    	String departmentName = sysDepartmentService.getById(sbComputers.getDepartmentId()).getName();
-    	sbComputers.setDepartmentName(departmentName);
+    	if(StringUtils.isEmpty(sbComputers.getDepartmentName())) {
+    		String departmentName = sysDepartmentService.getById(sbComputers.getDepartmentId()).getName();
+    		sbComputers.setDepartmentName(departmentName);
+    	}
     	boolean flag = sbComputersService.saveSbComputers(sbComputers);
+    	// 创建软件中间表信息
+    	sbComputersService.setComputersSoftware(obj, sbComputers.getId());
+    	// 创建文件夹权限
+    	sbComputersService.updateSbComputersPermission(permissionIds, sbComputers.getId().intValue());
         return ApiResult.result(flag);
     }
 
@@ -132,6 +143,8 @@ public class SbComputersController extends BaseController {
     	}
     	sbComputers.setUpdateTime(new Date());
     	boolean flag = sbComputersService.updateSbComputers(sbComputers);
+    	// 更新软件信息
+    	sbComputersService.updateSoftware(obj,sbComputers.getId());
     	// 创建文件夹权限
     	sbComputersService.updateSbComputersPermission(permissionIds, sbComputers.getId().intValue());
         return ApiResult.result(flag);
