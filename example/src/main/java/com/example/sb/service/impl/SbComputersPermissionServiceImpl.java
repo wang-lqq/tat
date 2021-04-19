@@ -97,6 +97,9 @@ public class SbComputersPermissionServiceImpl extends BaseServiceImpl<SbComputer
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();
 			BeanUtil.copyProperties(sbPermission, vo);
+			if(sbPermission.getParentId() == 0) {
+				vo.setSpread(true);
+			}
 			trees.add(vo);
 			for (SbComputersPermission sbComputersPermission : computersPermissions) {
 				if(sbComputersPermission.getPermissionId().equals(sbPermission.getId())) {

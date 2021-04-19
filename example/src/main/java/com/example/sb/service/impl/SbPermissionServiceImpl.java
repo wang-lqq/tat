@@ -83,6 +83,9 @@ public class SbPermissionServiceImpl extends BaseServiceImpl<SbPermissionMapper,
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();
 			BeanUtil.copyProperties(sbPermission, vo);
+			if(sbPermission.getParentId() == 0) {
+				vo.setSpread(true);
+			}
 			trees.add(vo);
 		}
 		trees = listToTree2(trees);

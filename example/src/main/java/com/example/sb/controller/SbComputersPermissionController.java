@@ -110,7 +110,6 @@ public class SbComputersPermissionController extends BaseController {
         return ApiResult.ok(list);
     }
     
-    
     /**
      * 查看权限树
      */
