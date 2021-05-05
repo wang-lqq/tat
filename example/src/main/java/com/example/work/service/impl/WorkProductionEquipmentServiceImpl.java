@@ -63,6 +63,7 @@ public class WorkProductionEquipmentServiceImpl extends BaseServiceImpl<WorkProd
     		String assetCode = obj.getString("assetCode");
     		String equipmentName = obj.getString("equipmentName");
     		String machineNumber = obj.getString("machineNumber");
+    		String departmentId = obj.getString("departmentId");
     		if(!StringUtils.isEmpty(assetCode)) {
     			wrapper.like(WorkProductionEquipment::getAssetCode, assetCode);
     		}
@@ -71,6 +72,9 @@ public class WorkProductionEquipmentServiceImpl extends BaseServiceImpl<WorkProd
     		}
     		if(!StringUtils.isEmpty(machineNumber)) {
     			wrapper.like(WorkProductionEquipment::getMachineNumber, machineNumber);
+    		}
+    		if(!StringUtils.isEmpty(departmentId)) {
+    			wrapper.like(WorkProductionEquipment::getDepartmentId, departmentId);
     		}
     	}
         IPage<WorkProductionEquipment> iPage = workProductionEquipmentMapper.selectPage(page, wrapper);

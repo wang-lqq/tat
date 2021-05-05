@@ -56,6 +56,7 @@ public class SbSoftwareServiceImpl extends BaseServiceImpl<SbSoftwareMapper, SbS
     public Paging<SbSoftware> getSbSoftwarePageList(SbSoftwarePageParam sbSoftwarePageParam) throws Exception {
         Page<SbSoftware> page = new PageInfo<>(sbSoftwarePageParam, OrderItem.desc(getLambdaColumn(SbSoftware::getCreateTime)));
         LambdaQueryWrapper<SbSoftware> wrapper = new LambdaQueryWrapper<>();
+        wrapper.ne(SbSoftware::getStatus, -1);
         
         String keyword = sbSoftwarePageParam.getKeyword();
     	if(!StringUtils.isEmpty(keyword)) {

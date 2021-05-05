@@ -216,4 +216,36 @@ public class SbComputersServiceImpl extends BaseServiceImpl<SbComputersMapper, S
 			sbComputersSoftwareMapper.insert(sbComputersSoftware);
 		}
 	}
+
+	@Override
+	public List<JSONObject> getList(JSONObject obj) {
+        LambdaQueryWrapper<SbComputers> wrapper = new LambdaQueryWrapper<>();
+        
+		String fullName = obj.getString("fullName");
+		String ipAddress = obj.getString("ipAddress");
+		String departmentId = obj.getString("departmentId");
+		String newAssetcode = obj.getString("newAssetcode");
+		if(!StringUtils.isEmpty(fullName)) {
+			wrapper.like(SbComputers::getFullName, fullName);
+		}
+		if(!StringUtils.isEmpty(ipAddress)) {
+			wrapper.like(SbComputers::getIpAddress, ipAddress);
+		}
+		if(!StringUtils.isEmpty(departmentId)) {
+			wrapper.eq(SbComputers::getDepartmentId, departmentId);
+		}
+		if(!StringUtils.isEmpty(newAssetcode)) {
+			wrapper.like(SbComputers::getNewAssetcode, newAssetcode);
+		}
+		wrapper.eq(SbComputers::getStatus, 0);
+		List<SbComputers> list = sbComputersMapper.selectList(wrapper);
+		
+		List<JSONObject> array = new ArrayList<>();
+		for (SbComputers sbComputers : list) {
+			JSONObject jsonObj = (JSONObject) JSONObject.toJSON(sbComputers);
+			jsonObj.put("startDate", DateUtil.formatDate(sbComputers.getStartDate()));
+			array.add(jsonObj);
+		}
+        return array;
+	}
 }

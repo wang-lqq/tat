@@ -1,24 +1,22 @@
 package com.example.work.entity;
 
-import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
-import com.baomidou.mybatisplus.annotation.IdType;
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.Version;
+
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+
+import io.geekidea.springbootplus.framework.common.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 
 /**
  * 设备表
  *
  * @author wanglonglong
- * @since 2021-02-20
+ * @since 2021-05-04
  */
 @Data
 @Accessors(chain = true)
@@ -51,5 +49,11 @@ public class WorkProductionEquipment extends BaseEntity {
 
     @ApiModelProperty("修改时间")
     private Date updateTime;
+
+    @ApiModelProperty("归属部门id")
+    private Integer departmentId;
+
+    @ApiModelProperty("归属部门名称")
+    private String departmentName;
 
 }

@@ -1,6 +1,7 @@
 package com.example.work.controller;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.HtmlUtils;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.work.entity.WorkParts;
 import com.example.work.entity.WorkRepairParts;
+import com.example.work.entity.WorkRepairReport;
 import com.example.work.param.WorkRepairPartsPageParam;
 import com.example.work.service.WorkPartsService;
 import com.example.work.service.WorkRepairPartsService;
+import com.example.work.service.WorkRepairReportService;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
@@ -47,6 +51,8 @@ import lombok.extern.slf4j.Slf4j;
 public class WorkRepairPartsController extends BaseController {
     @Autowired
     private WorkRepairPartsService workRepairPartsService;
+    @Autowired
+    private WorkRepairReportService workRepairReportService;
     @Autowired
     private WorkPartsService workPartsService;
 
@@ -102,6 +108,25 @@ public class WorkRepairPartsController extends BaseController {
         	workRepairParts.setSpecifications(specifications);
         }
         boolean	flag = workRepairPartsService.updateWorkRepairParts(workRepairParts);
+        // 更新总金额
+        double money = 0;
+        String workOrderNo = workRepairParts.getWorkOrderNo();
+        LambdaQueryWrapper<WorkRepairParts> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(WorkRepairParts::getWorkOrderNo, workOrderNo);
+        List<WorkRepairParts> list = workRepairPartsService.list(wrapper);
+        for (WorkRepairParts part : list) {
+        	money += part.getMoney();
+		}
+        // 更新
+        LambdaQueryWrapper<WorkRepairReport> wp = new LambdaQueryWrapper<>();
+        wp.eq(WorkRepairReport::getWorkOrderNo, workOrderNo);
+        List<WorkRepairReport> repairReports = workRepairReportService.list(wp);
+        if(CollectionUtil.isNotEmpty(repairReports)) {
+        	WorkRepairReport repairReport = repairReports.get(0);
+        	repairReport.setTotalCost(money);
+        	repairReport.setUpdateTime(new Date());
+        	workRepairReportService.updateWorkRepairReport(repairReport);
+        }
         return ApiResult.result(flag);
     }
 

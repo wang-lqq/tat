@@ -277,6 +277,17 @@ public class WorkRepairReportController extends BaseController {
     }
     
     /**
+     * 联络-维修单表列表
+     */
+    @PostMapping("/list")
+    @OperationLog(name = "联络-维修单表列表", type = OperationLogType.LIST)
+    @ApiOperation(value = "联络-维修单表列表", response = JSONObject.class)
+    public ApiResult<List<JSONObject>> list(@Validated @RequestBody JSONObject jsonObject) throws Exception {
+    	List<JSONObject> list = workRepairReportService.list2(jsonObject);
+        return ApiResult.ok(list);
+    }
+    
+    /**
      * 联络-维修单表提交审核
      */
     @PostMapping("/repairExamine")

@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -336,9 +337,10 @@ public class SysPermissionServiceImpl extends BaseServiceImpl<SysPermissionMappe
 
 	@Override
 	public List<SysPermission> OneLevel() {
-		Map<String, Object> columnMap = new HashMap<String, Object>();
-		columnMap.put("level", 1);
-		List<SysPermission> sysPermissions = sysPermissionMapper.selectByMap(columnMap);
+		LambdaQueryWrapper<SysPermission> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SysPermission::getLevel, 1);
+		wrapper.orderByDesc(SysPermission::getSort);
+		List<SysPermission> sysPermissions = sysPermissionMapper.selectList(wrapper);
 		return sysPermissions;
 	}
 

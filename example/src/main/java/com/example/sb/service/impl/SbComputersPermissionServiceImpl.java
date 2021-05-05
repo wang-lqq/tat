@@ -92,7 +92,11 @@ public class SbComputersPermissionServiceImpl extends BaseServiceImpl<SbComputer
 		wrapper.eq(SbComputersPermission::getComputersId, computersId);
 		List<SbComputersPermission> computersPermissions = list(wrapper);
 		
-		List<SbPermission> sbPermissions = sbPermissionService.list();
+		
+		LambdaQueryWrapper<SbPermission> wp = new LambdaQueryWrapper<>();
+		wp.orderByAsc(SbPermission::getId);
+		wp.ne(SbPermission::getStatus, -1);
+		List<SbPermission> sbPermissions = sbPermissionService.list(wp);
 		List<SbPermissionTreeVo> trees = new ArrayList<>();
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();

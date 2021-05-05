@@ -89,6 +89,9 @@ public class WorkProductionEquipmentController<T> extends BaseController {
     @OperationLog(name = "添加设备表", type = OperationLogType.ADD)
     @ApiOperation(value = "添加设备表", response = ApiResult.class)
     public ApiResult<Boolean> addWorkProductionEquipment(@Validated(Add.class) @RequestBody WorkProductionEquipment workProductionEquipment) throws Exception {
+    	if(workProductionEquipment.getDepartmentId() != null && workProductionEquipment.getDepartmentId() != 0) {
+	    		workProductionEquipment.setDepartmentName(sysDepartmentService.getById(workProductionEquipment.getDepartmentId()).getName());
+    	}
     	boolean flag = workProductionEquipmentService.saveWorkProductionEquipment(workProductionEquipment);
         return ApiResult.result(flag);
     }

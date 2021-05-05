@@ -47,12 +47,12 @@ public class SpringBootPlusGenerator {
         generatorProperties
                 .setMavenModuleName("ssx")
                 .setParentPackage("com.example")
-                .setModuleName("sb")
+                .setModuleName("work")
                 .setAuthor("wanglonglong")
                 .setFileOverride(true);
 
         // 设置表信息
-        generatorProperties.addTable("sb_software","id");
+        generatorProperties.addTable("work_spotcheck_items","id");
         // 设置表前缀
         // generatorProperties.setTablePrefix(Arrays.asList("tb_"));
 

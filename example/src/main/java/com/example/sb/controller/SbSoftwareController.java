@@ -93,7 +93,11 @@ public class SbSoftwareController extends BaseController {
     @OperationLog(name = "删除", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除", response = ApiResult.class)
     public ApiResult<Boolean> deleteSbSoftware(@PathVariable("id") Long id) throws Exception {
-        boolean flag = sbSoftwareService.deleteSbSoftware(id);
+    	// 逻辑删除
+    	SbSoftware sbSoftware = sbSoftwareService.getById(id);
+    	sbSoftware.setUpdateTime(new Date());
+    	sbSoftware.setStatus(-1);
+    	boolean flag = sbSoftwareService.updateSbSoftware(sbSoftware);
         return ApiResult.result(flag);
     }
 

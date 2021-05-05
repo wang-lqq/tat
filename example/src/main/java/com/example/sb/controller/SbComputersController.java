@@ -182,6 +182,16 @@ public class SbComputersController extends BaseController {
         Paging<SbComputers> paging = sbComputersService.getSbComputersPageList(sbComputersPageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 分页列表
+     */
+    @PostMapping("/getList")
+    @OperationLog(name = "列表", type = OperationLogType.PAGE)
+    @ApiOperation(value = "列表", response = SbComputers.class)
+    public ApiResult<List<JSONObject>> getList(@Validated @RequestBody JSONObject jsonObject) throws Exception {
+        List<JSONObject> list = sbComputersService.getList(jsonObject);
+        return ApiResult.ok(list);
+    }
 }
 

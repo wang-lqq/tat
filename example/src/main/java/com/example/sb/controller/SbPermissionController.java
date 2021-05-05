@@ -81,13 +81,17 @@ public class SbPermissionController extends BaseController {
     @OperationLog(name = "删除", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除", response = ApiResult.class)
     public ApiResult<Boolean> deleteSbPermission(@PathVariable("id") Long id) throws Exception {
-        boolean flag = sbPermissionService.deleteSbPermission(id);
-         return ApiResult.result(flag);
+    	// 逻辑删除
+    	SbPermission sbPermission = sbPermissionService.getById(id);
+    	sbPermission.setUpdateTime(new Date());
+    	sbPermission.setStatus(-1);
+    	boolean flag = sbPermissionService.updateSbPermission(sbPermission);
+        return ApiResult.result(flag);
     }
 
     /**
      * 获取详情
-     */
+     */ 
     @GetMapping("/info/{id}")
     @OperationLog(name = "详情", type = OperationLogType.INFO)
     @ApiOperation(value = "详情", response = SbPermission.class)

@@ -1,11 +1,7 @@
 package com.example.sb.service;
 
-import java.util.List;
-
-import com.alibaba.fastjson.JSONObject;
 import com.example.sb.entity.SbComputers;
 import com.example.sb.param.SbComputersPageParam;
-
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 
@@ -13,7 +9,7 @@ import io.geekidea.springbootplus.framework.core.pagination.Paging;
  *  服务类
  *
  * @author wanglonglong
- * @since 2021-04-01
+ * @since 2021-04-19
  */
 public interface SbComputersService extends BaseService<SbComputers> {
 
@@ -54,11 +50,4 @@ public interface SbComputersService extends BaseService<SbComputers> {
      */
     Paging<SbComputers> getSbComputersPageList(SbComputersPageParam sbComputersPageParam) throws Exception;
 
-    boolean updateSbComputersPermission(List<Integer> permissionIds, Integer computersId) throws Exception;
-
-	void setComputersSoftware(JSONObject jsonObject, Long computersId);
-
-	void updateSoftware(JSONObject jsonObject, Long computersId);
-
-	List<JSONObject> getList(JSONObject jsonObject);
 }

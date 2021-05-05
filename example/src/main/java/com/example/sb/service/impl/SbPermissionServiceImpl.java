@@ -62,7 +62,7 @@ public class SbPermissionServiceImpl extends BaseServiceImpl<SbPermissionMapper,
     public Paging<SbPermission> getSbPermissionPageList(SbPermissionPageParam sbPermissionPageParam) throws Exception {
         Page<SbPermission> page = new PageInfo<>(sbPermissionPageParam, OrderItem.desc(getLambdaColumn(SbPermission::getCreateTime)));
         LambdaQueryWrapper<SbPermission> wrapper = new LambdaQueryWrapper<>();
-        
+        wrapper.ne(SbPermission::getStatus, -1);
         String keyword = sbPermissionPageParam.getKeyword();
     	if(!StringUtils.isEmpty(keyword)) {
     		keyword = StringEscapeUtils.unescapeHtml4(keyword);
@@ -78,7 +78,11 @@ public class SbPermissionServiceImpl extends BaseServiceImpl<SbPermissionMapper,
 
 	@Override
 	public List<SbPermissionTreeVo> tree() {
-		List<SbPermission> sbPermissions = list();
+		LambdaQueryWrapper<SbPermission> wrapper = new LambdaQueryWrapper<>();
+		wrapper.orderByAsc(SbPermission::getId);
+		wrapper.ne(SbPermission::getStatus, -1);
+		List<SbPermission> sbPermissions = list(wrapper);
+		
 		List<SbPermissionTreeVo> trees = new ArrayList<>();
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();
@@ -97,7 +101,11 @@ public class SbPermissionServiceImpl extends BaseServiceImpl<SbPermissionMapper,
 		if(id != null && id != 0) {
 			return treeById(id);
 		}
-		List<SbPermission> sbPermissions = list();
+		LambdaQueryWrapper<SbPermission> wrapper = new LambdaQueryWrapper<>();
+		wrapper.orderByAsc(SbPermission::getId);
+		wrapper.ne(SbPermission::getStatus, -1);
+		List<SbPermission> sbPermissions = list(wrapper);
+		
 		List<SbPermissionTreeVo> trees = new ArrayList<>();
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();
@@ -155,7 +163,11 @@ public class SbPermissionServiceImpl extends BaseServiceImpl<SbPermissionMapper,
 			parentSbs = sbPermissionMapper.selectById(parentSb.getParentId());
 		}
 		
-		List<SbPermission> sbPermissions = list();
+		LambdaQueryWrapper<SbPermission> wrapper = new LambdaQueryWrapper<>();
+		wrapper.orderByAsc(SbPermission::getId);
+		wrapper.ne(SbPermission::getStatus, -1);
+		List<SbPermission> sbPermissions = list(wrapper);
+		
 		List<SbPermissionTreeVo> trees = new ArrayList<>();
 		for (SbPermission sbPermission : sbPermissions) {
 			SbPermissionTreeVo vo = new SbPermissionTreeVo();

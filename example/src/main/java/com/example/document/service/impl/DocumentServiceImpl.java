@@ -315,7 +315,9 @@ public class DocumentServiceImpl extends BaseServiceImpl<DocumentMapper, Documen
 			String documentId = operationLogVo.getPath().substring(operationLogVo.getPath().lastIndexOf("/")+1);
 			idList.add(Integer.parseInt(documentId));
 		}
-		queryWrapper.in("id", idList);
+		if(!CollectionUtils.isEmpty(idList)) {
+			queryWrapper.in("id", idList);
+		}
 		List<Document> documents = documentMapper.selectList(queryWrapper);
 		documents.sort(Comparator.comparingInt(o -> idList.indexOf(o.getId())));
 		return documents;

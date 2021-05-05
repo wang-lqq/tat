@@ -1,8 +1,8 @@
 package com.example.sb.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.sb.entity.SbComputer;
-import com.example.sb.param.SbComputerPageParam;
+import com.example.sb.entity.SbComputers;
+import com.example.sb.param.SbComputersPageParam;
 
 import org.springframework.stereotype.Repository;
 
@@ -15,10 +15,10 @@ import java.io.Serializable;
  *  Mapper 接口
  *
  * @author wanglonglong
- * @since 2021-03-29
+ * @since 2021-04-19
  */
 @Repository
-public interface SbComputerMapper extends BaseMapper<SbComputer> {
+public interface SbComputersMapper extends BaseMapper<SbComputers> {
 
 
 }
