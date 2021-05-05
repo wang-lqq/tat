@@ -15,53 +15,53 @@ import javax.validation.constraints.NotNull;
 import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 
 /**
- * 配件表
+ * 
  *
  * @author wanglonglong
- * @since 2021-03-26
+ * @since 2021-05-05
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "WorkParts对象")
-public class WorkParts extends BaseEntity {
+@ApiModel(value = "WorkSpotcheckItems对象")
+public class WorkSpotcheckItems extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ApiModelProperty("主键id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty("配件名称")
-    private String accessoryName;
+    @ApiModelProperty("设备id")
+    private Integer productionEquipmentId;
 
-    @ApiModelProperty("物料代码")
-    private String materialCode;
+    @ApiModelProperty("分类")
+    private String categoryName;
 
-    @ApiModelProperty("品牌")
-    private String brand;
+    @ApiModelProperty("检查部位")
+    private String examinationSite;
 
-    @ApiModelProperty("规格")
-    private String specifications;
+    @ApiModelProperty("检查内容")
+    private String inspectionContent;
 
-    @ApiModelProperty("单位")
-    private String company;
+    @ApiModelProperty("检查方式")
+    private String inspectionMethod;
 
-    @ApiModelProperty("单价")
-    private Double unitPrice;
+    @ApiModelProperty("判定基准")
+    private String definingPrinciple;
 
-    @ApiModelProperty("供应商名称")
-    private String supplierName;
+    @ApiModelProperty("点检周期")
+    private String inspectionCycle;
 
-    @ApiModelProperty("备注")
-    private String remarks;
+    @ApiModelProperty("点检周期code")
+    private String inspectionCycleCode;
+
+    @ApiModelProperty("技术附件")
+    private String technicalAnnex;
 
     @ApiModelProperty("创建时间")
     private Date createTime;
 
     @ApiModelProperty("修改时间")
     private Date updateTime;
-
-    @ApiModelProperty("图片")
-    private String picture;
 
 }

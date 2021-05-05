@@ -1,8 +1,8 @@
 package com.example.work.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.work.entity.WorkRepairParts;
-import com.example.work.param.WorkRepairPartsPageParam;
+import com.example.work.entity.WorkSpotcheckItems;
+import com.example.work.param.WorkSpotcheckItemsPageParam;
 
 import org.springframework.stereotype.Repository;
 
@@ -12,13 +12,13 @@ import org.apache.ibatis.annotations.Param;
 import java.io.Serializable;
 
 /**
- * 维修配件表 Mapper 接口
+ *  Mapper 接口
  *
  * @author wanglonglong
- * @since 2021-02-26
+ * @since 2021-05-05
  */
 @Repository
-public interface WorkRepairPartsMapper extends BaseMapper<WorkRepairParts> {
+public interface WorkSpotcheckItemsMapper extends BaseMapper<WorkSpotcheckItems> {
 
 
 }

@@ -8,16 +8,16 @@ import io.geekidea.springbootplus.framework.core.pagination.BasePageOrderParam;
 
 /**
  * <pre>
- * 联络-维修单表 分页参数对象
+ *  分页参数对象
  * </pre>
  *
  * @author wanglonglong
- * @date 2021-04-02
+ * @date 2021-05-05
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "联络-维修单表分页参数")
-public class WorkRepairReportPageParam extends BasePageOrderParam {
+@ApiModel(value = "分页参数")
+public class WorkSpotcheckItemsPageParam extends BasePageOrderParam {
     private static final long serialVersionUID = 1L;
 }
