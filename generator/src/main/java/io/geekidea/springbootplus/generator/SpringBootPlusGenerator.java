@@ -52,7 +52,7 @@ public class SpringBootPlusGenerator {
                 .setFileOverride(true);
 
         // 设置表信息
-        generatorProperties.addTable("work_spotcheck_items","id");
+        generatorProperties.addTable("work_spotcheck_plan","id");
         // 设置表前缀
         // generatorProperties.setTablePrefix(Arrays.asList("tb_"));
 
