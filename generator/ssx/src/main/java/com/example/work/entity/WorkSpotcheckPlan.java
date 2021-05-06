@@ -18,45 +18,26 @@ import io.geekidea.springbootplus.framework.core.validator.groups.Update;
  * 
  *
  * @author wanglonglong
- * @since 2021-05-05
+ * @since 2021-05-06
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
-@ApiModel(value = "WorkSpotcheckItems对象")
-public class WorkSpotcheckItems extends BaseEntity {
+@ApiModel(value = "WorkSpotcheckPlan对象")
+public class WorkSpotcheckPlan extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("主键id")
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
     @ApiModelProperty("设备id")
     private Integer productionEquipmentId;
 
-    @ApiModelProperty("分类")
-    private String categoryName;
-
-    @ApiModelProperty("检查部位")
-    private String examinationSite;
-
-    @ApiModelProperty("检查内容")
-    private String inspectionContent;
-
-    @ApiModelProperty("检查方式")
-    private String inspectionMethod;
-
-    @ApiModelProperty("判定基准")
-    private String definingPrinciple;
+    @ApiModelProperty("点检时间")
+    private String spotCheckTime;
 
     @ApiModelProperty("点检周期")
-    private String inspectionCycle;
-
-    @ApiModelProperty("点检周期code")
-    private String inspectionCycleCode;
-
-    @ApiModelProperty("技术附件")
-    private String technicalAnnex;
+    private String definingPrinciple;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

@@ -1,9 +1,9 @@
 package com.example.work.controller;
 
-import com.example.work.entity.WorkSpotcheckItems;
-import com.example.work.service.WorkSpotcheckItemsService;
+import com.example.work.entity.WorkSpotcheckPlan;
+import com.example.work.service.WorkSpotcheckPlanService;
 import lombok.extern.slf4j.Slf4j;
-import com.example.work.param.WorkSpotcheckItemsPageParam;
+import com.example.work.param.WorkSpotcheckPlanPageParam;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -23,17 +23,17 @@ import org.springframework.web.bind.annotation.*;
  *  控制器
  *
  * @author wanglonglong
- * @since 2021-05-05
+ * @since 2021-05-06
  */
 @Slf4j
 @RestController
-@RequestMapping("/workSpotcheckItems")
+@RequestMapping("/workSpotcheckPlan")
 @Module("work")
 @Api(value = "API", tags = {""})
-public class WorkSpotcheckItemsController extends BaseController {
+public class WorkSpotcheckPlanController extends BaseController {
 
     @Autowired
-    private WorkSpotcheckItemsService workSpotcheckItemsService;
+    private WorkSpotcheckPlanService workSpotcheckPlanService;
 
     /**
      * 添加
@@ -41,8 +41,8 @@ public class WorkSpotcheckItemsController extends BaseController {
     @PostMapping("/add")
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
-    public ApiResult<Boolean> addWorkSpotcheckItems(@Validated(Add.class) @RequestBody WorkSpotcheckItems workSpotcheckItems) throws Exception {
-        boolean flag = workSpotcheckItemsService.saveWorkSpotcheckItems(workSpotcheckItems);
+    public ApiResult<Boolean> addWorkSpotcheckPlan(@Validated(Add.class) @RequestBody WorkSpotcheckPlan workSpotcheckPlan) throws Exception {
+        boolean flag = workSpotcheckPlanService.saveWorkSpotcheckPlan(workSpotcheckPlan);
         return ApiResult.result(flag);
     }
 
@@ -52,8 +52,8 @@ public class WorkSpotcheckItemsController extends BaseController {
     @PostMapping("/update")
     @OperationLog(name = "修改", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改", response = ApiResult.class)
-    public ApiResult<Boolean> updateWorkSpotcheckItems(@Validated(Update.class) @RequestBody WorkSpotcheckItems workSpotcheckItems) throws Exception {
-        boolean flag = workSpotcheckItemsService.updateWorkSpotcheckItems(workSpotcheckItems);
+    public ApiResult<Boolean> updateWorkSpotcheckPlan(@Validated(Update.class) @RequestBody WorkSpotcheckPlan workSpotcheckPlan) throws Exception {
+        boolean flag = workSpotcheckPlanService.updateWorkSpotcheckPlan(workSpotcheckPlan);
         return ApiResult.result(flag);
     }
 
@@ -63,8 +63,8 @@ public class WorkSpotcheckItemsController extends BaseController {
     @PostMapping("/delete/{id}")
     @OperationLog(name = "删除", type = OperationLogType.DELETE)
     @ApiOperation(value = "删除", response = ApiResult.class)
-    public ApiResult<Boolean> deleteWorkSpotcheckItems(@PathVariable("id") Long id) throws Exception {
-        boolean flag = workSpotcheckItemsService.deleteWorkSpotcheckItems(id);
+    public ApiResult<Boolean> deleteWorkSpotcheckPlan(@PathVariable("id") Long id) throws Exception {
+        boolean flag = workSpotcheckPlanService.deleteWorkSpotcheckPlan(id);
         return ApiResult.result(flag);
     }
 
@@ -73,10 +73,10 @@ public class WorkSpotcheckItemsController extends BaseController {
      */
     @GetMapping("/info/{id}")
     @OperationLog(name = "详情", type = OperationLogType.INFO)
-    @ApiOperation(value = "详情", response = WorkSpotcheckItems.class)
-    public ApiResult<WorkSpotcheckItems> getWorkSpotcheckItems(@PathVariable("id") Long id) throws Exception {
-        WorkSpotcheckItems workSpotcheckItems = workSpotcheckItemsService.getById(id);
-        return ApiResult.ok(workSpotcheckItems);
+    @ApiOperation(value = "详情", response = WorkSpotcheckPlan.class)
+    public ApiResult<WorkSpotcheckPlan> getWorkSpotcheckPlan(@PathVariable("id") Long id) throws Exception {
+        WorkSpotcheckPlan workSpotcheckPlan = workSpotcheckPlanService.getById(id);
+        return ApiResult.ok(workSpotcheckPlan);
     }
 
     /**
@@ -84,9 +84,9 @@ public class WorkSpotcheckItemsController extends BaseController {
      */
     @PostMapping("/getPageList")
     @OperationLog(name = "分页列表", type = OperationLogType.PAGE)
-    @ApiOperation(value = "分页列表", response = WorkSpotcheckItems.class)
-    public ApiResult<Paging<WorkSpotcheckItems>> getWorkSpotcheckItemsPageList(@Validated @RequestBody WorkSpotcheckItemsPageParam workSpotcheckItemsPageParam) throws Exception {
-        Paging<WorkSpotcheckItems> paging = workSpotcheckItemsService.getWorkSpotcheckItemsPageList(workSpotcheckItemsPageParam);
+    @ApiOperation(value = "分页列表", response = WorkSpotcheckPlan.class)
+    public ApiResult<Paging<WorkSpotcheckPlan>> getWorkSpotcheckPlanPageList(@Validated @RequestBody WorkSpotcheckPlanPageParam workSpotcheckPlanPageParam) throws Exception {
+        Paging<WorkSpotcheckPlan> paging = workSpotcheckPlanService.getWorkSpotcheckPlanPageList(workSpotcheckPlanPageParam);
         return ApiResult.ok(paging);
     }
 
