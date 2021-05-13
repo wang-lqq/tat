@@ -12,12 +12,12 @@ import io.geekidea.springbootplus.framework.core.pagination.BasePageOrderParam;
  * </pre>
  *
  * @author wanglonglong
- * @date 2021-05-06
+ * @date 2021-05-13
  */
 @Data
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @ApiModel(value = "分页参数")
-public class WorkSpotcheckPlanPageParam extends BasePageOrderParam {
+public class WorkSpotcheckRecordPageParam extends BasePageOrderParam {
     private static final long serialVersionUID = 1L;
 }
