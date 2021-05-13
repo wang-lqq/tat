@@ -50,4 +50,6 @@ public interface WorkProductionEquipmentService extends BaseService<WorkProducti
      */
     Paging<WorkProductionEquipment> getWorkProductionEquipmentPageList(WorkProductionEquipmentPageParam workProductionEquipmentPageParam) throws Exception;
 
+	Paging<WorkProductionEquipment> getPlanPageList(WorkProductionEquipmentPageParam workProductionEquipmentPageParam);
+
 }

@@ -1,4 +1,4 @@
-package com.example.work.controller;
+ package com.example.work.controller;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -137,6 +137,17 @@ public class WorkProductionEquipmentController<T> extends BaseController {
     @ApiOperation(value = "设备表分页列表", response = WorkProductionEquipment.class)
     public ApiResult<Paging<WorkProductionEquipment>> getWorkProductionEquipmentPageList(@Validated @RequestBody WorkProductionEquipmentPageParam workProductionEquipmentPageParam) throws Exception {
     	Paging<WorkProductionEquipment> paging = workProductionEquipmentService.getWorkProductionEquipmentPageList(workProductionEquipmentPageParam);
+    	return ApiResult.ok(paging);
+    }
+    
+    /**
+     * 添加点检计划设备分页列表
+     */
+    @PostMapping("/getPlanPageList")
+    @OperationLog(name = "添加点检计划设备分页列表", type = OperationLogType.PAGE)
+    @ApiOperation(value = "添加点检计划设备分页列表", response = WorkProductionEquipment.class)
+    public ApiResult<Paging<WorkProductionEquipment>> getPlanPageList(@Validated @RequestBody WorkProductionEquipmentPageParam workProductionEquipmentPageParam) throws Exception {
+    	Paging<WorkProductionEquipment> paging = workProductionEquipmentService.getPlanPageList(workProductionEquipmentPageParam);
     	return ApiResult.ok(paging);
     }
     

@@ -1,8 +1,10 @@
 package com.example.work.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.work.entity.WorkSpotcheckItems;
+import com.example.work.enums.CycleCodeEnum;
 import com.example.work.param.WorkSpotcheckItemsPageParam;
 import com.example.work.service.WorkSpotcheckItemsService;
 
@@ -52,7 +55,12 @@ public class WorkSpotcheckItemsController extends BaseController {
     @OperationLog(name = "添加", type = OperationLogType.ADD)
     @ApiOperation(value = "添加", response = ApiResult.class)
     public ApiResult<Boolean> addWorkSpotcheckItems(@Validated(Add.class) @RequestBody WorkSpotcheckItems workSpotcheckItems) throws Exception {
-        boolean flag = workSpotcheckItemsService.saveWorkSpotcheckItems(workSpotcheckItems);
+    	String inspectionCycle = workSpotcheckItems.getInspectionCycle();
+    	if(!StringUtils.isEmpty(inspectionCycle)) {
+    		String inspectionCycleCode = CycleCodeEnum.getValue(inspectionCycle);
+    		workSpotcheckItems.setInspectionCycleCode(inspectionCycleCode);
+    	}
+    	boolean flag = workSpotcheckItemsService.saveWorkSpotcheckItems(workSpotcheckItems);
         return ApiResult.result(flag);
     }
 
@@ -63,7 +71,13 @@ public class WorkSpotcheckItemsController extends BaseController {
     @OperationLog(name = "修改", type = OperationLogType.UPDATE)
     @ApiOperation(value = "修改", response = ApiResult.class)
     public ApiResult<Boolean> updateWorkSpotcheckItems(@Validated(Update.class) @RequestBody WorkSpotcheckItems workSpotcheckItems) throws Exception {
-        boolean flag = workSpotcheckItemsService.updateWorkSpotcheckItems(workSpotcheckItems);
+    	String inspectionCycle = workSpotcheckItems.getInspectionCycle();
+    	if(!StringUtils.isEmpty(inspectionCycle)) {
+    		String inspectionCycleCode = CycleCodeEnum.getValue(inspectionCycle);
+    		workSpotcheckItems.setInspectionCycleCode(inspectionCycleCode);
+    	}
+    	workSpotcheckItems.setUpdateTime(new Date());
+    	boolean flag = workSpotcheckItemsService.updateWorkSpotcheckItems(workSpotcheckItems);
         return ApiResult.result(flag);
     }
 

@@ -1,5 +1,8 @@
 package com.example.work.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +15,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.work.entity.WorkProductionEquipment;
+import com.example.work.entity.WorkSpotcheckItems;
 import com.example.work.mapper.WorkProductionEquipmentMapper;
+import com.example.work.mapper.WorkSpotcheckItemsMapper;
 import com.example.work.param.WorkProductionEquipmentPageParam;
 import com.example.work.service.WorkProductionEquipmentService;
 
@@ -33,6 +38,8 @@ public class WorkProductionEquipmentServiceImpl extends BaseServiceImpl<WorkProd
 
     @Autowired
     private WorkProductionEquipmentMapper workProductionEquipmentMapper;
+    @Autowired
+    private WorkSpotcheckItemsMapper workSpotcheckItemsMapper;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -81,4 +88,45 @@ public class WorkProductionEquipmentServiceImpl extends BaseServiceImpl<WorkProd
         return new Paging<WorkProductionEquipment>(iPage);
     }
 
+	@Override
+	public Paging<WorkProductionEquipment> getPlanPageList(
+			WorkProductionEquipmentPageParam workProductionEquipmentPageParam) {
+		LambdaQueryWrapper<WorkSpotcheckItems> wp = new LambdaQueryWrapper<>();
+		wp.groupBy(WorkSpotcheckItems::getProductionEquipmentId);
+		wp.select(WorkSpotcheckItems::getProductionEquipmentId);
+		List<WorkSpotcheckItems> list = workSpotcheckItemsMapper.selectList(wp);
+		
+		List<Integer> productionEquipmentIdList = new ArrayList<Integer>();
+		for (WorkSpotcheckItems workSpotcheckItems : list) {
+			productionEquipmentIdList.add(workSpotcheckItems.getProductionEquipmentId());
+		}
+		
+		Page<WorkProductionEquipment> page = new PageInfo<>(workProductionEquipmentPageParam, OrderItem.desc(getLambdaColumn(WorkProductionEquipment::getCreateTime)));
+        LambdaQueryWrapper<WorkProductionEquipment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(WorkProductionEquipment::getId, productionEquipmentIdList);
+        
+        String keyword = workProductionEquipmentPageParam.getKeyword();
+    	if(!StringUtils.isEmpty(keyword)) {
+    		keyword = StringEscapeUtils.unescapeHtml4(keyword);
+    		JSONObject obj = JSONObject.parseObject(keyword);
+    		String assetCode = obj.getString("assetCode");
+    		String equipmentName = obj.getString("equipmentName");
+    		String machineNumber = obj.getString("machineNumber");
+    		String departmentId = obj.getString("departmentId");
+    		if(!StringUtils.isEmpty(assetCode)) {
+    			wrapper.like(WorkProductionEquipment::getAssetCode, assetCode);
+    		}
+    		if(!StringUtils.isEmpty(equipmentName)) {
+    			wrapper.like(WorkProductionEquipment::getEquipmentName, equipmentName);
+    		}
+    		if(!StringUtils.isEmpty(machineNumber)) {
+    			wrapper.like(WorkProductionEquipment::getMachineNumber, machineNumber);
+    		}
+    		if(!StringUtils.isEmpty(departmentId)) {
+    			wrapper.like(WorkProductionEquipment::getDepartmentId, departmentId);
+    		}
+    	}
+        IPage<WorkProductionEquipment> iPage = workProductionEquipmentMapper.selectPage(page, wrapper);
+        return new Paging<WorkProductionEquipment>(iPage);
+	}
 }

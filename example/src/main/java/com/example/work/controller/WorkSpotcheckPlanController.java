@@ -1,23 +1,32 @@
 package com.example.work.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkSpotcheckPlan;
-import com.example.work.service.WorkSpotcheckPlanService;
-import lombok.extern.slf4j.Slf4j;
 import com.example.work.param.WorkSpotcheckPlanPageParam;
-import io.geekidea.springbootplus.framework.common.controller.BaseController;
+import com.example.work.service.WorkSpotcheckPlanService;
+
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
+import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.common.param.IdParam;
+import io.geekidea.springbootplus.framework.core.validator.groups.Add;
+import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
-import io.geekidea.springbootplus.framework.core.validator.groups.Add;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
-import org.springframework.validation.annotation.Validated;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  控制器
@@ -43,6 +52,17 @@ public class WorkSpotcheckPlanController extends BaseController {
     @ApiOperation(value = "添加", response = ApiResult.class)
     public ApiResult<Boolean> addWorkSpotcheckPlan(@Validated(Add.class) @RequestBody WorkSpotcheckPlan workSpotcheckPlan) throws Exception {
         boolean flag = workSpotcheckPlanService.saveWorkSpotcheckPlan(workSpotcheckPlan);
+        return ApiResult.result(flag);
+    }
+    
+    /**
+     * 添加
+     */
+    @PostMapping("/addList")
+    @OperationLog(name = "添加", type = OperationLogType.ADD)
+    @ApiOperation(value = "添加", response = ApiResult.class)
+    public ApiResult<Boolean> addList(@Validated(Add.class) @RequestBody JSONObject jsonObject) throws Exception {
+        boolean flag = workSpotcheckPlanService.addList(jsonObject);
         return ApiResult.result(flag);
     }
 
@@ -89,6 +109,16 @@ public class WorkSpotcheckPlanController extends BaseController {
         Paging<WorkSpotcheckPlan> paging = workSpotcheckPlanService.getWorkSpotcheckPlanPageList(workSpotcheckPlanPageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    /**
+     * 时间列表
+     */
+    @PostMapping("/getDate")
+    @OperationLog(name = "时间列表", type = OperationLogType.PAGE)
+    @ApiOperation(value = "时间列表", response = WorkSpotcheckPlan.class)
+    public ApiResult<List<JSONObject>> getDate(@Validated @RequestBody JSONObject jsonObject) throws Exception {
+        List<JSONObject> list = workSpotcheckPlanService.getDate(jsonObject);
+        return ApiResult.ok(list);
+    }
 }
 
