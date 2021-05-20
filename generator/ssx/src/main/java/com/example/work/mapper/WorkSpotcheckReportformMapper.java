@@ -1,8 +1,8 @@
 package com.example.work.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.work.entity.WorkSpotcheckRecord;
-import com.example.work.param.WorkSpotcheckRecordPageParam;
+import com.example.work.entity.WorkSpotcheckReportform;
+import com.example.work.param.WorkSpotcheckReportformPageParam;
 
 import org.springframework.stereotype.Repository;
 
@@ -15,10 +15,10 @@ import java.io.Serializable;
  *  Mapper 接口
  *
  * @author wanglonglong
- * @since 2021-05-13
+ * @since 2021-05-20
  */
 @Repository
-public interface WorkSpotcheckRecordMapper extends BaseMapper<WorkSpotcheckRecord> {
+public interface WorkSpotcheckReportformMapper extends BaseMapper<WorkSpotcheckReportform> {
 
 
 }
