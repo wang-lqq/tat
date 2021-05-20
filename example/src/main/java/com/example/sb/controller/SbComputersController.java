@@ -193,5 +193,16 @@ public class SbComputersController extends BaseController {
         List<JSONObject> list = sbComputersService.getList(jsonObject);
         return ApiResult.ok(list);
     }
+    
+    /**
+     * 通过域用户名查询电脑台账id
+     */
+    @PostMapping("/getByDomainUsername")
+    @OperationLog(name = "通过域用户名查询电脑台账id", type = OperationLogType.OTHER_QUERY)
+    @ApiOperation(value = "通过域用户名查询电脑台账id", response = Long.class)
+    public ApiResult<Long> getByDomainUsername(@Validated @RequestBody JSONObject jsonObject){
+        Long id = sbComputersService.getByDomainUsername(jsonObject);
+        return ApiResult.ok(id);
+    }
 }
 

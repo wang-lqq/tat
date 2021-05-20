@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import com.example.work.mapper.WorkSpotcheckPlanMapper;
 import com.example.work.param.WorkSpotcheckPlanPageParam;
 import com.example.work.service.WorkSpotcheckPlanService;
 import com.example.work.vo.InspectionCycleVo;
+import com.example.work.vo.WorkSpotcheckPlanVo;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateField;
@@ -188,5 +190,29 @@ public class WorkSpotcheckPlanServiceImpl extends BaseServiceImpl<WorkSpotcheckP
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public Paging<WorkSpotcheckPlanVo> getPlanPageList(WorkSpotcheckPlanPageParam workSpotcheckPlanPageParam) {
+		Page<WorkSpotcheckPlan> page = new PageInfo<>(workSpotcheckPlanPageParam);
+        
+		String spotCheckTime = DateUtil.today();
+		Integer departmentId = 0;
+		String assetCode = "";
+		String equipmentName = "";
+		String machineNumber = "";
+		String keyword = workSpotcheckPlanPageParam.getKeyword();
+    	if(!StringUtils.isEmpty(keyword)) {
+    		keyword = StringEscapeUtils.unescapeHtml4(keyword);
+    		JSONObject obj = JSONObject.parseObject(keyword);
+    		departmentId = obj.getInteger("departmentId");
+    		spotCheckTime = obj.getString("spotCheckTime");
+    		assetCode = obj.getString("assetCode");
+    		equipmentName = obj.getString("equipmentName");
+    		machineNumber = obj.getString("machineNumber");
+    	}
+    	IPage<WorkSpotcheckPlanVo> iPage = workSpotcheckPlanMapper.getPlanPageList(page, workSpotcheckPlanPageParam,
+    			spotCheckTime, departmentId,assetCode,equipmentName,machineNumber);
+        return new Paging<WorkSpotcheckPlanVo>(iPage);
 	}
 }

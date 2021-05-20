@@ -5,6 +5,7 @@ import java.util.List;
 import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkSpotcheckPlan;
 import com.example.work.param.WorkSpotcheckPlanPageParam;
+import com.example.work.vo.WorkSpotcheckPlanVo;
 
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
@@ -57,4 +58,6 @@ public interface WorkSpotcheckPlanService extends BaseService<WorkSpotcheckPlan>
     List<JSONObject> getDate(JSONObject jsonObject);
 
 	boolean addList(JSONObject jsonObject);
+
+	Paging<WorkSpotcheckPlanVo> getPlanPageList(WorkSpotcheckPlanPageParam workSpotcheckPlanPageParam);
 }

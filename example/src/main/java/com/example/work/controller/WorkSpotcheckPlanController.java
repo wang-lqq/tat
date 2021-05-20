@@ -15,6 +15,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkSpotcheckPlan;
 import com.example.work.param.WorkSpotcheckPlanPageParam;
 import com.example.work.service.WorkSpotcheckPlanService;
+import com.example.work.vo.WorkSpotcheckPlanVo;
 
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
 import io.geekidea.springbootplus.framework.common.controller.BaseController;
@@ -119,6 +120,29 @@ public class WorkSpotcheckPlanController extends BaseController {
     public ApiResult<List<JSONObject>> getDate(@Validated @RequestBody JSONObject jsonObject) throws Exception {
         List<JSONObject> list = workSpotcheckPlanService.getDate(jsonObject);
         return ApiResult.ok(list);
+    }
+    
+    /**
+     * 分页列表
+     */
+    @PostMapping("/getPlanPageList")
+    @OperationLog(name = "分页列表", type = OperationLogType.PAGE)
+    @ApiOperation(value = "分页列表", response = WorkSpotcheckPlan.class)
+    public ApiResult<Paging<WorkSpotcheckPlanVo>> getPlanPageList(@Validated @RequestBody WorkSpotcheckPlanPageParam workSpotcheckPlanPageParam) throws Exception {
+        Paging<WorkSpotcheckPlanVo> paging = workSpotcheckPlanService.getPlanPageList(workSpotcheckPlanPageParam);
+        return ApiResult.ok(paging);
+    }
+    
+    
+    /**
+     * 点检报表
+     */
+    @PostMapping("/reportForm")
+    @OperationLog(name = "点检报表", type = OperationLogType.PAGE)
+    @ApiOperation(value = "点检报表", response = WorkSpotcheckPlan.class)
+    public ApiResult<Paging<WorkSpotcheckPlanVo>> reportForm(@Validated @RequestBody WorkSpotcheckPlanPageParam workSpotcheckPlanPageParam) throws Exception {
+        Paging<WorkSpotcheckPlanVo> paging = workSpotcheckPlanService.getPlanPageList(workSpotcheckPlanPageParam);
+        return ApiResult.ok(paging);
     }
 }
 

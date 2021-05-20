@@ -38,6 +38,12 @@ public class WorkSpotcheckPlan extends BaseEntity {
 
     @ApiModelProperty("点检周期")
     private String definingPrinciple;
+    
+    @ApiModelProperty("点检时间")
+    private Date inspectionTime;
+
+    @ApiModelProperty("点检状态：0，未点检；1，已点检")
+    private Integer spotCheckStatus;
 
     @ApiModelProperty("创建时间")
     private Date createTime;

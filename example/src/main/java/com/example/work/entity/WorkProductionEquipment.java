@@ -55,5 +55,10 @@ public class WorkProductionEquipment extends BaseEntity {
 
     @ApiModelProperty("归属部门名称")
     private String departmentName;
+    
+    @ApiModelProperty("组织结构图中组别名称")
+    private String groupName;
 
+    @ApiModelProperty("实施担当")
+    private String toBear;
 }

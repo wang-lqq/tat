@@ -61,4 +61,6 @@ public interface SbComputersService extends BaseService<SbComputers> {
 	void updateSoftware(JSONObject jsonObject, Long computersId);
 
 	List<JSONObject> getList(JSONObject jsonObject);
+
+	Long getByDomainUsername(JSONObject jsonObject);
 }

@@ -1,6 +1,8 @@
 package com.example.sb.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +35,7 @@ import com.example.sb.param.SbComputersPageParam;
 import com.example.sb.service.SbComputersPermissionService;
 import com.example.sb.service.SbComputersService;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import io.geekidea.springbootplus.framework.common.exception.DaoException;
 import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
@@ -240,6 +243,13 @@ public class SbComputersServiceImpl extends BaseServiceImpl<SbComputersMapper, S
 		wrapper.eq(SbComputers::getStatus, 0);
 		List<SbComputers> list = sbComputersMapper.selectList(wrapper);
 		
+		// 这里进行排序
+        Collections.sort(list, new Comparator<SbComputers>() {
+            @Override
+            public int compare(SbComputers s1, SbComputers s2) {
+                return s1.getDepartmentId().compareTo(s2.getDepartmentId());
+            }
+        });
 		List<JSONObject> array = new ArrayList<>();
 		for (SbComputers sbComputers : list) {
 			JSONObject jsonObj = (JSONObject) JSONObject.toJSON(sbComputers);
@@ -247,5 +257,20 @@ public class SbComputersServiceImpl extends BaseServiceImpl<SbComputersMapper, S
 			array.add(jsonObj);
 		}
         return array;
+	}
+
+	@Override
+	public Long getByDomainUsername(JSONObject jsonObject) {
+		String domainUsername = jsonObject.getString("domainUsername");
+		LambdaQueryWrapper<SbComputers> wrapper = new LambdaQueryWrapper<>();
+		wrapper.eq(SbComputers::getDomainUsername, domainUsername);
+		wrapper.eq(SbComputers::getStatus, 0);
+		
+		List<SbComputers> listComputers = sbComputersMapper.selectList(wrapper);
+		SbComputers sbComputers = new SbComputers();
+		if(CollectionUtil.isNotEmpty(listComputers)) {
+			sbComputers = listComputers.get(0);
+		}
+		return sbComputers.getId();
 	}
 }

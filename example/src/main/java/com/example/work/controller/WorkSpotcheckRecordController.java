@@ -1,5 +1,6 @@
 package com.example.work.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkSpotcheckRecord;
 import com.example.work.service.WorkSpotcheckRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,17 @@ public class WorkSpotcheckRecordController extends BaseController {
     @ApiOperation(value = "添加", response = ApiResult.class)
     public ApiResult<Boolean> addWorkSpotcheckRecord(@Validated(Add.class) @RequestBody WorkSpotcheckRecord workSpotcheckRecord) throws Exception {
         boolean flag = workSpotcheckRecordService.saveWorkSpotcheckRecord(workSpotcheckRecord);
+        return ApiResult.result(flag);
+    }
+    
+    /**
+     * 批量添加
+     */
+    @PostMapping("/addList")
+    @OperationLog(name = "批量添加", type = OperationLogType.ADD)
+    @ApiOperation(value = "批量添加", response = ApiResult.class)
+    public ApiResult<Boolean> addListWorkSpotcheckRecord(@Validated(Add.class) @RequestBody JSONObject jsonObject) throws Exception {
+        boolean flag = workSpotcheckRecordService.addList(jsonObject);
         return ApiResult.result(flag);
     }
 
@@ -89,6 +101,5 @@ public class WorkSpotcheckRecordController extends BaseController {
         Paging<WorkSpotcheckRecord> paging = workSpotcheckRecordService.getWorkSpotcheckRecordPageList(workSpotcheckRecordPageParam);
         return ApiResult.ok(paging);
     }
-
 }
 

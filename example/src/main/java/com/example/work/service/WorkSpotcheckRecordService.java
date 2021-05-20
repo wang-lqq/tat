@@ -1,5 +1,6 @@
 package com.example.work.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.example.work.entity.WorkSpotcheckRecord;
 import com.example.work.param.WorkSpotcheckRecordPageParam;
 import io.geekidea.springbootplus.framework.common.service.BaseService;
@@ -49,5 +50,7 @@ public interface WorkSpotcheckRecordService extends BaseService<WorkSpotcheckRec
      * @throws Exception
      */
     Paging<WorkSpotcheckRecord> getWorkSpotcheckRecordPageList(WorkSpotcheckRecordPageParam workSpotcheckRecordPageParam) throws Exception;
+
+	boolean addList(JSONObject jsonObject);
 
 }

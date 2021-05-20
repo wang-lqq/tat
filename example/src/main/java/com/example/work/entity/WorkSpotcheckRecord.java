@@ -40,8 +40,8 @@ public class WorkSpotcheckRecord extends BaseEntity {
     @ApiModelProperty("点检资料id")
     private Integer spotcheckItemsId;
 
-    @ApiModelProperty("判定（×，√）")
-    private String determine;
+    @ApiModelProperty("判定：0，×；1，√")
+    private Integer determine;
 
     @ApiModelProperty("改善及处理对策")
     private String improve;

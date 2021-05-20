@@ -60,9 +60,4 @@ public class WorkSpotcheckItemsServiceImpl extends BaseServiceImpl<WorkSpotcheck
         return new Paging<WorkSpotcheckItems>(iPage);
     }
 
-	@Override
-	public List<WorkSpotcheckItems> getList(JSONObject jsonObject) {
-		
-		return null;
-	}
 }

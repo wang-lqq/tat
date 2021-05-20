@@ -54,5 +54,4 @@ public interface WorkSpotcheckItemsService extends BaseService<WorkSpotcheckItem
      */
     Paging<WorkSpotcheckItems> getWorkSpotcheckItemsPageList(WorkSpotcheckItemsPageParam workSpotcheckItemsPageParam) throws Exception;
 
-	List<WorkSpotcheckItems> getList(JSONObject jsonObject);
 }
