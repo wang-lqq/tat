@@ -15,11 +15,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.work.entity.WorkSpotcheckItems;
 import com.example.work.entity.WorkSpotcheckPlan;
 import com.example.work.entity.WorkSpotcheckRecord;
+import com.example.work.entity.WorkSpotcheckReportform;
+import com.example.work.enums.CycleCodeEnum;
 import com.example.work.mapper.WorkSpotcheckRecordMapper;
 import com.example.work.param.WorkSpotcheckRecordPageParam;
 import com.example.work.service.WorkSpotcheckItemsService;
 import com.example.work.service.WorkSpotcheckPlanService;
 import com.example.work.service.WorkSpotcheckRecordService;
+import com.example.work.service.WorkSpotcheckReportformService;
 
 import io.geekidea.springbootplus.framework.common.service.impl.BaseServiceImpl;
 import io.geekidea.springbootplus.framework.core.pagination.PageInfo;
@@ -42,6 +45,8 @@ public class WorkSpotcheckRecordServiceImpl extends BaseServiceImpl<WorkSpotchec
     private WorkSpotcheckItemsService workSpotcheckItemsService;
     @Autowired
     private WorkSpotcheckPlanService workSpotcheckPlanService;
+    @Autowired
+    private WorkSpotcheckReportformService workSpotcheckReportformService;
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -78,6 +83,7 @@ public class WorkSpotcheckRecordServiceImpl extends BaseServiceImpl<WorkSpotchec
     	wrapper.eq(WorkSpotcheckItems::getProductionEquipmentId, productionEquipmentId);
 		wrapper.like(WorkSpotcheckItems::getInspectionCycleCode, inspectionCycle);
 		List<WorkSpotcheckItems> items = workSpotcheckItemsService.list(wrapper);
+		Date now = new Date();
 		// 获取点检记录条数
 		boolean b = true;
 		int nullCount = 0;
@@ -97,7 +103,7 @@ public class WorkSpotcheckRecordServiceImpl extends BaseServiceImpl<WorkSpotchec
 			record.setImprove(improve);
 			record.setImplementationInformation(implementationInformation);
 			record.setDetermine(determine);
-			record.setUpdateTime(new Date());
+			record.setUpdateTime(now);
 			// 更新或新增
 			saveOrUpdate(record);
 			if(determine == null) {
@@ -108,16 +114,57 @@ public class WorkSpotcheckRecordServiceImpl extends BaseServiceImpl<WorkSpotchec
 		// 更新点检计划表
 		WorkSpotcheckPlan plan = workSpotcheckPlanService.getById(spotcheckPlanId);
 		if(!b && nullCount < size) {
-			plan.setUpdateTime(new Date());
-			plan.setInspectionTime(new Date());
+			plan.setUpdateTime(now);
+			plan.setInspectionTime(now);
 			plan.setSpotCheckStatus(1);// 点检中
 			workSpotcheckPlanService.updateById(plan);
 		}else if(b) {
-			plan.setUpdateTime(new Date());
-			plan.setInspectionTime(new Date());
+			plan.setUpdateTime(now);
+			plan.setInspectionTime(now);
 			plan.setSpotCheckStatus(2);// 已点检
 			workSpotcheckPlanService.updateById(plan);
 		}
+		// 更新点检报表
+		LambdaQueryWrapper<WorkSpotcheckReportform> wp = new LambdaQueryWrapper<>();
+		wp.eq(WorkSpotcheckReportform::getProductionEquipmentId, productionEquipmentId);
+		WorkSpotcheckReportform reportform = workSpotcheckReportformService.getOne(wp);
+		if(reportform == null) {
+			reportform = new WorkSpotcheckReportform();
+			reportform.setProductionEquipmentId(productionEquipmentId);
+			reportform.setUpdateTime(now);
+		}
+		if(plan.getDefiningPrinciple().equals(CycleCodeEnum.DAY_CODE.getCycle())) {// 日
+			reportform.setDaySpotcheckPlanId(plan.getId());
+			reportform.setDaySpotCheckStatus(plan.getSpotCheckStatus());
+			reportform.setDayInspectionTime(now);
+		}
+		if(plan.getDefiningPrinciple().equals(CycleCodeEnum.WEEK_CODE.getCycle())) {// 周
+			reportform.setWeekSpotcheckPlanId(plan.getId());
+			reportform.setWeekSpotCheckStatus(plan.getSpotCheckStatus());
+			reportform.setWeekInspectionTime(now);
+		}
+		if(plan.getDefiningPrinciple().equals(CycleCodeEnum.MONTH_CODE.getCycle())) {// 月
+			reportform.setMonthSpotcheckPlanId(plan.getId());
+			reportform.setMonthSpotCheckStatus(plan.getSpotCheckStatus());
+			reportform.setMonthInspectionTime(now);
+		}
+		if(plan.getDefiningPrinciple().equals(CycleCodeEnum.QUARTER_CODE.getCycle())) {// 季度
+			reportform.setQuarterSpotcheckPlanId(plan.getId());
+			reportform.setQuarterSpotCheckStatus(plan.getSpotCheckStatus());
+			reportform.setQuarterInspectionTime(now);
+		}
+		if(plan.getDefiningPrinciple().equals(CycleCodeEnum.HALF_YEAR.getCycle())) {// 半年度
+			reportform.setHalfyearSpotcheckPlanId(plan.getId());
+			reportform.setHalfyearSpotCheckStatus(plan.getSpotCheckStatus());
+			reportform.setHalfyearInspectionTime(now);
+		}
+		if(plan.getDefiningPrinciple().equals(CycleCodeEnum.YEAR_CODE.getCycle())) {// 年
+			reportform.setYearSpotcheckPlanId(plan.getId());
+			reportform.setYearSpotCheckStatus(plan.getSpotCheckStatus());
+			reportform.setYearInspectionTime(now);
+		}
+		reportform.setUpdateTime(now);
+		workSpotcheckReportformService.saveOrUpdate(reportform);
 		return true;
 	}
 }

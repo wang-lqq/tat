@@ -1,10 +1,11 @@
 package com.example.work.enums;
 
 public enum CycleCodeEnum {
-	DAY_CODE("日", "年季度月周日"),
-	WEEK_CODE("周", "年季度月周"),
-	MONTH_CODE("月", "年季度月"),
-	QUARTER_CODE("季度", "年季度"),
+	DAY_CODE("日", "年半年度季度月周日"),
+	WEEK_CODE("周", "年半年度季度月周"),
+	MONTH_CODE("月", "年半年度季度月"),
+	QUARTER_CODE("季度", "年半年度季度"),
+	HALF_YEAR("半年度", "年半年度"),
 	YEAR_CODE("年", "年");
 	
 	private String cycle;

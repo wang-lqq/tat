@@ -334,17 +334,15 @@ public class WorkRepairReportController extends BaseController {
 					submitterEmail = sysUser.getEmail();
 				}
 			}
-			
 			Map<String, Object> data = object2Map(wrr);
 			data.put("createTime", DateUtil.format(wrr.getCreateTime(),"yyyy-MM-dd HH:mm"));
 			data.put("completionTime", DateUtil.formatDate(wrr.getCompletionTime()));
 			data.put("repairCompletionTime", DateUtil.formatDate(wrr.getRepairCompletionTime()));
 	    	try {
-	    		// 报修审核人
-	    		if(!StringUtils.isEmpty(email)) {
+	    		if(!StringUtils.isEmpty(email)) {// 发送给报修审核人
 	    			mailService.sendMail(email, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
 	    		}
-				if(!StringUtils.isEmpty(submitterEmail)) {
+				if(!StringUtils.isEmpty(submitterEmail)) {// 发送给报修提交人
 					mailService.sendMail(submitterEmail, EmailEnum.REPORT_COMPLETE.getSubject()+" "+wrr.getWorkOrderNo(), EmailEnum.REPORT_COMPLETE.getTemplate(), data);
 				}
 			} catch (Exception e) {

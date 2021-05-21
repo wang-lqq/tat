@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.work.mapper.WorkSpotcheckReportformMapper">
+	<select id="getReportFormPageList" parameterType="java.lang.String" resultType="com.example.work.vo.WorkSpotcheckReportformVo">
+		SELECT reportform.*,pro.category,pro.equipment_name,pro.machine_number,pro.model,pro.asset_code,
+		pro.department_id,pro.department_name,pro.group_name,pro.to_bear
+		FROM work_spotcheck_reportform reportform, work_production_equipment pro
+		WHERE reportform.production_equipment_id = pro.id
+		<if test="departmentId !=null and departmentId!=0">
+        	and pro.department_id = #{departmentId}
+    	</if >
+    	<if test="assetCode !=null and assetCode!=''">
+        	and pro.asset_code like '%${assetCode}%'
+    	</if >
+    	<if test="equipmentName !=null and equipmentName!=''">
+        	and pro.equipment_name like '%${equipmentName}%'
+    	</if >
+    	<if test="machineNumber !=null and machineNumber!=''">
+        	and pro.machine_number like '%${machineNumber}%'
+    	</if >
+	</select>
+</mapper>

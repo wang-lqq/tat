@@ -2,6 +2,8 @@ package com.example.work.service;
 
 import com.example.work.entity.WorkSpotcheckReportform;
 import com.example.work.param.WorkSpotcheckReportformPageParam;
+import com.example.work.vo.WorkSpotcheckReportformVo;
+
 import io.geekidea.springbootplus.framework.common.service.BaseService;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
 
@@ -50,4 +52,7 @@ public interface WorkSpotcheckReportformService extends BaseService<WorkSpotchec
      */
     Paging<WorkSpotcheckReportform> getWorkSpotcheckReportformPageList(WorkSpotcheckReportformPageParam workSpotcheckReportformPageParam) throws Exception;
 
+	Paging<WorkSpotcheckReportformVo> reportForm(WorkSpotcheckReportformPageParam workSpotcheckReportformPageParam);
+	
+	void setIsSpotcheckItems(String inspectionCycle, Integer productionEquipmentId);
 }

@@ -132,17 +132,5 @@ public class WorkSpotcheckPlanController extends BaseController {
         Paging<WorkSpotcheckPlanVo> paging = workSpotcheckPlanService.getPlanPageList(workSpotcheckPlanPageParam);
         return ApiResult.ok(paging);
     }
-    
-    
-    /**
-     * 点检报表
-     */
-    @PostMapping("/reportForm")
-    @OperationLog(name = "点检报表", type = OperationLogType.PAGE)
-    @ApiOperation(value = "点检报表", response = WorkSpotcheckPlan.class)
-    public ApiResult<Paging<WorkSpotcheckPlanVo>> reportForm(@Validated @RequestBody WorkSpotcheckPlanPageParam workSpotcheckPlanPageParam) throws Exception {
-        Paging<WorkSpotcheckPlanVo> paging = workSpotcheckPlanService.getPlanPageList(workSpotcheckPlanPageParam);
-        return ApiResult.ok(paging);
-    }
 }
 

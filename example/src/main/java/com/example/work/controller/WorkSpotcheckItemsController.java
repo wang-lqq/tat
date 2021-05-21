@@ -22,6 +22,7 @@ import com.example.work.enums.CycleCodeEnum;
 import com.example.work.param.WorkSpotcheckItemsPageParam;
 import com.example.work.service.WorkSpotcheckItemsService;
 import com.example.work.service.WorkSpotcheckRecordService;
+import com.example.work.service.WorkSpotcheckReportformService;
 
 import cn.hutool.core.collection.CollectionUtil;
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
@@ -53,8 +54,9 @@ public class WorkSpotcheckItemsController extends BaseController {
     private WorkSpotcheckItemsService workSpotcheckItemsService;
     @Autowired
     private WorkSpotcheckRecordService workSpotcheckRecordService;
+    @Autowired
+    private WorkSpotcheckReportformService workSpotcheckReportformService;
     
-
     /**
      * 添加
      */
@@ -68,11 +70,14 @@ public class WorkSpotcheckItemsController extends BaseController {
     		workSpotcheckItems.setInspectionCycleCode(inspectionCycleCode);
     	}
     	boolean flag = workSpotcheckItemsService.saveWorkSpotcheckItems(workSpotcheckItems);
+    	if(!StringUtils.isEmpty(workSpotcheckItems.getInspectionCycle()) && workSpotcheckItems.getProductionEquipmentId() != null && workSpotcheckItems.getProductionEquipmentId() != 0) {
+    		workSpotcheckReportformService.setIsSpotcheckItems(workSpotcheckItems.getInspectionCycle(), workSpotcheckItems.getProductionEquipmentId());;
+    	}
         return ApiResult.result(flag);
     }
     
     /**
-     * 添加
+     * 批量添加
      */
     @PostMapping("/addList")
     @OperationLog(name = "添加", type = OperationLogType.ADD)
@@ -87,6 +92,9 @@ public class WorkSpotcheckItemsController extends BaseController {
     		}
     		item.setUpdateTime(new Date());
     		flag = workSpotcheckItemsService.saveOrUpdate(item);
+    		if(!StringUtils.isEmpty(item.getInspectionCycle()) && item.getProductionEquipmentId() != null && item.getProductionEquipmentId() != 0) {
+        		workSpotcheckReportformService.setIsSpotcheckItems(item.getInspectionCycle(), item.getProductionEquipmentId());;
+        	}
 		}
         return ApiResult.result(flag);
     }
@@ -105,6 +113,9 @@ public class WorkSpotcheckItemsController extends BaseController {
     	}
     	workSpotcheckItems.setUpdateTime(new Date());
     	boolean flag = workSpotcheckItemsService.updateWorkSpotcheckItems(workSpotcheckItems);
+    	if(!StringUtils.isEmpty(workSpotcheckItems.getInspectionCycle()) && workSpotcheckItems.getProductionEquipmentId() != null && workSpotcheckItems.getProductionEquipmentId() != 0) {
+    		workSpotcheckReportformService.setIsSpotcheckItems(workSpotcheckItems.getInspectionCycle(), workSpotcheckItems.getProductionEquipmentId());;
+    	}
         return ApiResult.result(flag);
     }
 
@@ -180,7 +191,7 @@ public class WorkSpotcheckItemsController extends BaseController {
 			obj.put("implementationInformation", "");
 			obj.put("spotcheckRecordId", "");
     		for (WorkSpotcheckRecord workSpotcheckRecord : spotcheckRecords) {
-				if(workSpotcheckItems.getId() == workSpotcheckRecord.getSpotcheckItemsId()) {
+				if(workSpotcheckItems.getId().intValue() == workSpotcheckRecord.getSpotcheckItemsId()) {
 					// 设置点检结果
 					obj.put("determine", workSpotcheckRecord.getDetermine());
 					if(!StringUtils.isEmpty(workSpotcheckRecord.getImprove())) {

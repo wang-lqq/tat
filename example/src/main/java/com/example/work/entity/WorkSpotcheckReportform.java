@@ -88,4 +88,23 @@ public class WorkSpotcheckReportform extends BaseEntity {
     @ApiModelProperty("点检时间")
     private Date yearInspectionTime;
 
+    @ApiModelProperty("0：无该点检项目；1：有该点检项目")
+    private Integer daySpotcheckItems;
+    
+    private Integer weekSpotcheckItems;
+    
+    private Integer monthSpotcheckItems;
+    
+    private Integer quarterSpotcheckItems;
+    
+    private Integer halfyearSpotcheckItems;
+    
+    private Integer yearSpotcheckItems;
+    
+    @ApiModelProperty("创建时间")
+    private Date createTime;
+    
+    @ApiModelProperty("修改时间")
+    private Date updateTime;
+    
 }

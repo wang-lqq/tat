@@ -1,23 +1,30 @@
 package com.example.work.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.work.entity.WorkSpotcheckReportform;
-import com.example.work.service.WorkSpotcheckReportformService;
-import lombok.extern.slf4j.Slf4j;
 import com.example.work.param.WorkSpotcheckReportformPageParam;
-import io.geekidea.springbootplus.framework.common.controller.BaseController;
+import com.example.work.service.WorkSpotcheckReportformService;
+import com.example.work.vo.WorkSpotcheckReportformVo;
+
 import io.geekidea.springbootplus.framework.common.api.ApiResult;
+import io.geekidea.springbootplus.framework.common.controller.BaseController;
 import io.geekidea.springbootplus.framework.core.pagination.Paging;
-import io.geekidea.springbootplus.framework.common.param.IdParam;
+import io.geekidea.springbootplus.framework.core.validator.groups.Add;
+import io.geekidea.springbootplus.framework.core.validator.groups.Update;
 import io.geekidea.springbootplus.framework.log.annotation.Module;
 import io.geekidea.springbootplus.framework.log.annotation.OperationLog;
 import io.geekidea.springbootplus.framework.log.enums.OperationLogType;
-import io.geekidea.springbootplus.framework.core.validator.groups.Add;
-import io.geekidea.springbootplus.framework.core.validator.groups.Update;
-import org.springframework.validation.annotation.Validated;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  控制器
@@ -89,6 +96,17 @@ public class WorkSpotcheckReportformController extends BaseController {
         Paging<WorkSpotcheckReportform> paging = workSpotcheckReportformService.getWorkSpotcheckReportformPageList(workSpotcheckReportformPageParam);
         return ApiResult.ok(paging);
     }
-
+    
+    
+    /**
+     * 点检报表
+     */
+    @PostMapping("/reportForm")
+    @OperationLog(name = "点检报表", type = OperationLogType.PAGE)
+    @ApiOperation(value = "点检报表", response = WorkSpotcheckReportformVo.class)
+    public ApiResult<Paging<WorkSpotcheckReportformVo>> reportForm(@Validated @RequestBody WorkSpotcheckReportformPageParam workSpotcheckReportformPageParam) throws Exception {
+        Paging<WorkSpotcheckReportformVo> paging = workSpotcheckReportformService.reportForm(workSpotcheckReportformPageParam);
+        return ApiResult.ok(paging);
+    }
 }
 
